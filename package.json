@@ -1,0 +1,34 @@
+{
+    "name": "deno-vm-tools",
+    "version": "1.0.0",
+    "private": "true",
+    "description": "Tools module to help building/testing/formatting code.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/casual-simulation/node-deno-vm.git"
+    },
+    "keywords": [
+        "vm",
+        "deno"
+    ],
+    "author": "Kallyn Gowdy <kallyngowdy@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/casual-simulation/node-deno-vm/issues"
+    },
+    "homepage": "https://github.com/casual-simulation/node-deno-vm#readme",
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --staged"
+        }
+    },
+    "devDependencies": {
+        "husky": "^4.2.5",
+        "prettier": "^2.0.5",
+        "pretty-quick": "^2.0.1"
+    }
+}
