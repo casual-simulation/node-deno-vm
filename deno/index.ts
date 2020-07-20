@@ -1,15 +1,25 @@
 import { connectWebSocket, WebSocket } from 'https://deno.land/std/ws/mod.ts';
+import {
+    serializeStructure,
+    deserializeStructure,
+    Transferrable,
+} from './StructureClone.ts';
 
-const port = parseInt(Deno.args[0]);
+const address = Deno.args[0];
+const script = Deno.args[1];
 
 init();
 
 async function init() {
-    const socket = await connectWebSocket(`http://127.0.0.1:${port}`);
+    const socket = await connectWebSocket(address);
+
+    let onMessage = patchGlobalThis((json) => socket.send(json));
 
     const messages = async (): Promise<void> => {
         for await (const message of socket) {
-            console.log('Got Message!');
+            if (typeof message === 'string') {
+                onMessage(message);
+            }
         }
     };
 
@@ -26,8 +36,47 @@ async function init() {
         },
         socket
     );
+
+    Function(script)();
 }
 
 async function sendMessage(message: any, socket: WebSocket) {
-    return socket.send(JSON.stringify(message));
+    const structured = serializeStructure(message);
+    const json = JSON.stringify(structured);
+    return socket.send(json);
+}
+
+function patchGlobalThis(send: (json: string) => void) {
+    (<any>globalThis).postMessage = postMessage;
+
+    return function onmessage(message: string) {
+        if (typeof message === 'string') {
+            const structuredData = JSON.parse(message);
+            const data = deserializeStructure(structuredData);
+
+            const event = new MessageEvent('message', {
+                data,
+            });
+
+            if (typeof (<any>globalThis).onmessage === 'function') {
+                (<any>globalThis).onmessage(event);
+            }
+            globalThis.dispatchEvent(event);
+        }
+    };
+
+    function postMessage(data: any, transfer?: Transferrable[]): void {
+        const structuredData = serializeStructure(data, transfer);
+        const json = JSON.stringify(structuredData);
+        send(json);
+    }
+}
+
+class MessageEvent extends Event {
+    data: any;
+
+    constructor(type: string, dict: EventInit & { data: any }) {
+        super(type, dict);
+        this.data = dict.data;
+    }
 }
