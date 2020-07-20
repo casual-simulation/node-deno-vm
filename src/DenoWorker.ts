@@ -8,6 +8,12 @@ export type Transferrable = ArrayBuffer;
 
 const DENO_SCRIPT_PATH = './deno/index.ts';
 
+/**
+ * The DenoWorker class is a WebWorker-like interface for interacting with Deno.
+ *
+ * Because Deno is an isolated environment, this worker gives you the ability to run untrusted JavaScript code without
+ * potentially compromising your system.
+ */
 export class DenoWorker {
     private _httpServer: Server;
     private _server: WSServer;
@@ -17,6 +23,10 @@ export class DenoWorker {
     private _available: boolean;
     private _pendingMessages: string[];
 
+    /**
+     * Creates a new DenoWorker instance and injects the given script.
+     * @param script The JavaScript that the worker should be started with.
+     */
     constructor(script: string) {
         this._onmessageListeners = [];
         this._pendingMessages = [];
@@ -95,8 +105,16 @@ export class DenoWorker {
         });
     }
 
-    onmessage: (e: any) => void = null;
+    /**
+     * Represents an event handler for the "message" event, that is a function to be called when a message is recieved from the worker.
+     */
+    onmessage: (e: MessageEvent) => void = null;
 
+    /**
+     * Sends a message to the worker.
+     * @param data The data to be sent. Copied via the Structured Clone algorithm so circular references are supported in addition to typed arrays.
+     * @param transfer Values that should be transferred. This should include any typed arrays that are referenced in the data.
+     */
     postMessage(data: any, transfer?: Transferrable[]): void {
         const structuredData = serializeStructure(data, transfer);
         const json = JSON.stringify(structuredData);
@@ -107,6 +125,9 @@ export class DenoWorker {
         }
     }
 
+    /**
+     * Terminiates the worker and cleans up unused resources.
+     */
     terminate() {
         if (this._process) {
             this._process.kill();
@@ -124,12 +145,22 @@ export class DenoWorker {
         this._pendingMessages = null;
     }
 
+    /**
+     * Adds the given listener for the "message" event.
+     * @param type The type of the event. (Always "message")
+     * @param listener The listener to add for the event.
+     */
     addEventListener(type: 'message', listener: OnMessageListener): void {
         if (type === 'message') {
             this._onmessageListeners.push(listener);
         }
     }
 
+    /**
+     * Removes the given listener for the "message" event.
+     * @param type The type of the event. (Always "message")
+     * @param listener The listener to add for the event.
+     */
     removeEventListener(type: 'message', listener: OnMessageListener): void {
         if (type === 'message') {
             const index = this._onmessageListeners.indexOf(listener);

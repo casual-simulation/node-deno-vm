@@ -9,3 +9,24 @@ A VM module for Node.js that utilizes the secure environment provided by Deno.
 -   Secure out-of-process VM environment provided by [Deno](https://deno.land).
 -   Web Worker-like API
 -   Node.js Client
+
+## Usage
+
+```typescript
+import { DenoWorker } from 'deno-vm';
+
+const script = `
+    self.onmessage = (e) => {
+        self.postMessage(e.data * 2);
+    };
+`;
+
+const worker = new DenoWorker(script);
+
+worker.onmessage = (e) => {
+    console.log('Number: ' + e.data);
+};
+
+worker.postMessage(2);
+// Number: 4
+```
