@@ -1,0 +1,54 @@
+name: Continuous Integration
+
+on: [push, pull_request]
+
+jobs:
+    test:
+        name: Test
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macOS-latest, windows-latest]
+                node-version: [12.x]
+                deno-version: [1.x]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@v1
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: Use Deno Version ${{ matrix.deno-version }}
+              uses: denolib/setup-deno@master
+              with:
+              deno-version: ${{ matrix.deno-version }}
+            - name: npm install
+              run: npm ci
+              env:
+                  CI: true
+            - name: npm test
+              run: npx jest --detectOpenHandles --forceExit --no-cache
+              env:
+                  CI: true
+            - name: deno test
+              run: |
+                  cd deno
+                  deno test
+    build:
+        name: Build
+        strategy:
+            matrix:
+                os: [ubuntu-latest, macOS-latest, windows-latest]
+                node-version: [12.x]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - uses: actions/checkout@v1
+            - name: Use Node.js ${{ matrix.node-version }}
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node-version }}
+            - name: npm install and build
+              run: |
+                  npm ci
+                  npm run build
+              env:
+                  CI: true
