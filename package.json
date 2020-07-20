@@ -5,7 +5,12 @@
     "description": "Tools module to help building/testing/formatting code.",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "bootstrap": "npm install && cd src/nodejs && npm install",
+        "test": "npm run test:node",
+        "test:watch": "npm run test:node:watch",
+        "test:node": "cd src/nodejs && npm test",
+        "test:node:watch": "cd src/nodejs && npm run test:watch",
+        "build": "cd src/nodejs && npm run build"
     },
     "repository": {
         "type": "git",

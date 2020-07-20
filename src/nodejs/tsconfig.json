@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "outDir": "./temp/",
+        "baseUrl": ".",
+        "noImplicitAny": true,
+        "module": "esNext",
+        "esModuleInterop": true,
+        "target": "es6",
+        "allowJs": false,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "lib": ["es2015", "es5"],
+        "typeRoots": ["node_modules/@types", "./typings"]
+    },
+    "exclude": ["node_modules"]
+}

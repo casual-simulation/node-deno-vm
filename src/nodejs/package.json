@@ -1,0 +1,35 @@
+{
+    "name": "deno-vm",
+    "version": "1.0.0",
+    "description": "A VM module that provides a secure runtime environment via Deno.",
+    "main": "index.js",
+    "scripts": {
+        "build": "rollup -c",
+        "watch": "rollup -cw",
+        "test": "jest",
+        "test:watch": "jest --watchAll"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/casual-simulation/node-deno-vm.git"
+    },
+    "keywords": [
+        "vm",
+        "deno"
+    ],
+    "author": "Kallyn Gowdy <kallyngowdy@gmail.com>",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/casual-simulation/node-deno-vm/issues"
+    },
+    "homepage": "https://github.com/casual-simulation/node-deno-vm#readme",
+    "devDependencies": {
+        "@types/jest": "^26.0.5",
+        "jest": "^26.1.0",
+        "rollup": "^2.22.1",
+        "rollup-plugin-typescript": "^1.0.1",
+        "rollup-watch": "^4.3.1",
+        "ts-jest": "^26.1.3",
+        "typescript": "^3.9.7"
+    }
+}
