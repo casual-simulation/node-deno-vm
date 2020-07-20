@@ -1,35 +1,13 @@
 import WebSocket, { Server } from 'ws';
 import { spawn } from 'child_process';
+import { MessagePort } from 'worker_threads';
+
+export type Transferrable = ArrayBuffer;
 
 export class DenoWorker {
-    init(): Promise<void> {
-        return new Promise((resolve, reject) => {
-            const server = new Server();
-            server.on('connection', (socket) => {
-                socket.on('message', (data) => {
-                    if (typeof data !== 'string') {
-                        return;
-                    }
-                    const message = JSON.parse(data);
-                    if (message.type === 'init') {
-                        resolve();
-                    }
-                });
-            });
+    constructor(file: string) {}
 
-            const addr = server.address();
-            if (typeof addr === 'object') {
-                spawn('deno', [
-                    'run',
-                    '--allow-net=http://127.0.0.1:' + addr.port,
-                    '../deno/index.ts',
-                    addr.port.toString(),
-                ]);
-            } else {
-                return reject(new Error('Needs the address to be an object.'));
-            }
-        });
-    }
+    onmessage(e: any): void {}
 
-    private _onConnection(socket: WebSocket) {}
+    postMessage(data: any, transfer?: Transferrable[]): void {}
 }
