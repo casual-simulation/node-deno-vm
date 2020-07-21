@@ -15,6 +15,10 @@ jobs:
               with:
                   node-version: 12.x
                   registry-url: https://registry.npmjs.org/
+            - name: Use Deno Version ${{ matrix.deno-version }}
+              uses: denolib/setup-deno@master
+              with:
+                  deno-version: 1.x
             - name: npm install and test
               run: |
                   npm ci
