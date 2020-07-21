@@ -254,6 +254,26 @@ Deno.test('serializeStructure() should support Map objects', () => {
     );
 });
 
+Deno.test('serializeStructure() should support Set objects', () => {
+    assertEquals(
+        serializeStructure(
+            new Set<any>(['abc', 'def', 99, { name: 'bob' }])
+        ),
+        {
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: ['abc', 'def', 99, ['$1']],
+                    type: 'Set',
+                },
+                $1: {
+                    root: { name: 'bob' },
+                },
+            },
+        }
+    );
+});
+
 Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
@@ -509,5 +529,23 @@ Deno.test('deserializeStructure() should support Map objects', () => {
             ['key', 'value'],
             [{ name: 'bob' }, 99],
         ])
+    );
+});
+
+Deno.test('deserializeStructure() should support Set objects', () => {
+    assertEquals(
+        deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: ['abc', 'def', 99, ['$1']],
+                    type: 'Set',
+                },
+                $1: {
+                    root: { name: 'bob' },
+                },
+            },
+        }),
+        new Set<any>(['abc', 'def', 99, { name: 'bob' }])
     );
 });

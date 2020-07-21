@@ -170,6 +170,21 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             root.push(_serializeObject(prop, map));
         }
         return [id];
+    } else if (value instanceof Set) {
+        let root = [] as any[];
+        let obj = {
+            root,
+            type: 'Set',
+        } as Ref;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj,
+        });
+        for (let prop of value) {
+            root.push(_serializeObject(prop, map));
+        }
+        return [id];
     } else if (value instanceof Object) {
         let root = {} as any;
         let ref = {
@@ -275,6 +290,16 @@ function _deserializeRef(
                 final.set(key, val);
             }
             return final;
+        } else if (refData.type === 'Set') {
+            let final = new Set();
+            map.set(ref, final);
+            for (let value of refData.root) {
+                const val = Array.isArray(value)
+                    ? _deserializeRef(structure, value[0], map)
+                    : value;
+                final.add(val);
+            }
+            return final;
         }
     } else if (Array.isArray(refData.root)) {
         let arr = [] as any[];
@@ -334,5 +359,6 @@ export interface Ref {
         | 'BigInt'
         | 'Date'
         | 'RegExp'
-        | 'Map';
+        | 'Map'
+        | 'Set';
 }

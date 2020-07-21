@@ -253,6 +253,25 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it('should support Set objects', () => {
+            expect(
+                serializeStructure(
+                    new Set<any>(['abc', 'def', 99, { name: 'bob' }])
+                )
+            ).toEqual({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: ['abc', 'def', 99, ['$1']],
+                        type: 'Set',
+                    },
+                    $1: {
+                        root: { name: 'bob' },
+                    },
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -466,6 +485,25 @@ describe('StructureClone', () => {
                     ['key', 'value'],
                     [{ name: 'bob' }, 99],
                 ])
+            );
+        });
+
+        it('should support Set objects', () => {
+            expect(
+                deserializeStructure({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: ['abc', 'def', 99, ['$1']],
+                            type: 'Set',
+                        },
+                        $1: {
+                            root: { name: 'bob' },
+                        },
+                    },
+                })
+            ).toEqual(
+                new Set<any>(['abc', 'def', 99, { name: 'bob' }])
             );
         });
     });
