@@ -6,7 +6,8 @@ import {
 } from './StructureClone.ts';
 
 const address = Deno.args[0];
-const script = Deno.args[1];
+const scriptType = Deno.args[1];
+const script = Deno.args[2];
 
 init();
 
@@ -37,7 +38,13 @@ async function init() {
         socket
     );
 
-    Function(script)();
+    if (scriptType === 'script') {
+        Function(script)();
+    } else if (scriptType === 'import') {
+        import(script);
+    } else {
+        throw new Error('Unsupported scrypt type: ' + scriptType);
+    }
 }
 
 async function sendMessage(message: any, socket: WebSocket) {

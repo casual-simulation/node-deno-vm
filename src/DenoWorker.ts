@@ -1,12 +1,88 @@
 import { createServer, Server } from 'http';
 import WebSocket, { Server as WSServer } from 'ws';
-import {} from 'fs';
+import { resolve } from 'path';
 import { ChildProcess, spawn } from 'child_process';
 import { serializeStructure, deserializeStructure } from './StructureClone';
+import { URL } from 'url';
+import process from 'process';
 
 export type Transferrable = ArrayBuffer;
 
-const DENO_SCRIPT_PATH = './deno/index.ts';
+const DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH = __dirname.endsWith('src')
+    ? resolve(__dirname, '../deno/index.ts')
+    : resolve(__dirname, '../../deno/index.ts');
+
+export interface DenoWorkerOptions {
+    /**
+     * The path to the script that should be used to bootstrap the worker environment in Deno.
+     * If specified, this script will be used instead of the default bootstrap script.
+     * Only advanced users should set this.
+     */
+    denoBootstrapScriptPath: string;
+
+    /**
+     * Whether to reload scripts.
+     * If given a list of strings then only the specified URLs will be reloaded.
+     * Defaults to false when NODE_ENV is set to "production" and true otherwise.
+     */
+    reload: boolean | string[];
+
+    /**
+     * The permissions that the Deno worker should use.
+     */
+    permissions: {
+        /**
+         * Whether to allow all permissions.
+         * Defaults to false.
+         */
+        allowAll?: boolean;
+
+        /**
+         * Whether to allow network connnections.
+         * If given a list of strings then only the specified origins/paths are allowed.
+         * Defaults to false.
+         */
+        allowNet?: boolean | string[];
+
+        /**
+         * Whether to allow reading from the filesystem.
+         * If given a list of strings then only the specified file paths are allowed.
+         * Defaults to false.
+         */
+        allowRead?: boolean | string[];
+
+        /**
+         * Whether to allow writing to the filesystem.
+         * If given a list of strings then only the specified file paths are allowed.
+         * Defaults to false.
+         */
+        allowWrite?: boolean | string[];
+
+        /**
+         * Whether to allow reading environment variables.
+         * Defaults to false.
+         */
+        allowEnv?: boolean;
+
+        /**
+         * Whether to allow running Deno plugins.
+         * Defaults to false.
+         */
+        allowPlugin?: boolean;
+
+        /**
+         * Whether to allow running subprocesses.
+         * Defaults to false.
+         */
+        allowRun?: boolean;
+
+        /**
+         * Whether to allow high resolution time measurement.
+         * Defaults to false.
+         */
+        allowHrtime?: boolean;
+    };
+}
 
 /**
  * The DenoWorker class is a WebWorker-like interface for interacting with Deno.
@@ -22,15 +98,24 @@ export class DenoWorker {
     private _onmessageListeners: OnMessageListener[];
     private _available: boolean;
     private _pendingMessages: string[];
+    private _options: DenoWorkerOptions;
 
     /**
      * Creates a new DenoWorker instance and injects the given script.
      * @param script The JavaScript that the worker should be started with.
      */
-    constructor(script: string) {
+    constructor(script: string | URL, options?: Partial<DenoWorkerOptions>) {
         this._onmessageListeners = [];
         this._pendingMessages = [];
         this._available = false;
+        this._options = Object.assign(
+            {
+                denoBootstrapScriptPath: DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH,
+                reload: process.env.NODE_ENV !== 'production',
+                permissions: {},
+            },
+            options || {}
+        );
         this._httpServer = createServer();
         this._server = new WSServer({
             server: this._httpServer,
@@ -84,14 +169,64 @@ export class DenoWorker {
                 allowAddress = `${addr.address}:${addr.port}`;
             }
 
+            let scriptArgs: string[];
+
+            if (typeof script === 'string') {
+                scriptArgs = ['script', script];
+            } else {
+                scriptArgs = ['import', script.href];
+            }
+
+            let runArgs = [] as string[];
+
+            addOption(runArgs, '--reload', this._options.reload);
+
+            runArgs.push(`--allow-net=${allowAddress}`);
+
+            if (this._options.permissions) {
+                addOption(
+                    runArgs,
+                    '--allow-all',
+                    this._options.permissions.allowAll
+                );
+                addOption(
+                    runArgs,
+                    '--allow-net',
+                    this._options.permissions.allowNet
+                );
+                addOption(
+                    runArgs,
+                    '--allow-read',
+                    this._options.permissions.allowRead
+                );
+                addOption(
+                    runArgs,
+                    '--allow-write',
+                    this._options.permissions.allowWrite
+                );
+                addOption(
+                    runArgs,
+                    '--allow-env',
+                    this._options.permissions.allowEnv
+                );
+                addOption(
+                    runArgs,
+                    '--allow-plugin',
+                    this._options.permissions.allowPlugin
+                );
+                addOption(
+                    runArgs,
+                    '--allow-hrtime',
+                    this._options.permissions.allowHrtime
+                );
+            }
+
             this._process = spawn('deno', [
                 'run',
-                '--reload',
-                '--quiet',
-                `--allow-net=${allowAddress}`,
-                DENO_SCRIPT_PATH,
+                ...runArgs,
+                this._options.denoBootstrapScriptPath,
                 connectAddress,
-                script,
+                ...scriptArgs,
             ]);
 
             this._process.stdout.setEncoding('utf8');
@@ -177,4 +312,14 @@ export interface OnMessageListener {
 
 export interface MessageEvent {
     data: any;
+}
+
+function addOption(list: string[], name: string, option: boolean | string[]) {
+    if (option === true) {
+        list.push(`${name}`);
+    } else if (Array.isArray(option)) {
+        for (let script of option) {
+            list.push(`${name}=${script}`);
+        }
+    }
 }
