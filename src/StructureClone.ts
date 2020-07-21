@@ -14,7 +14,7 @@ export type Transferrable =
 /**
  * Serializes the given value into a new object that is flat and contains no circular references.
  *
- * The returned object contains a root which is the entry point to the data structure and optionally
+ * The returned object is JSON-safe and contains a root which is the entry point to the data structure and optionally
  * contains a refs property which is a flat map of references.
  *
  * If the refs property is defined, then the data structure was circular.
@@ -50,6 +50,10 @@ export function serializeStructure(
     }
 }
 
+/**
+ * Deserializes the given structure into its original form.
+ * @param value The structure to deserialize.
+ */
 export function deserializeStructure(value: Structure) {
     if ('refs' in value) {
         let map = new Map<string, any>();
