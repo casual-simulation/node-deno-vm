@@ -1,0 +1,35 @@
+name: Publish
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    publish:
+        name: Publish
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - name: Use Node.js 12.x
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 12.x
+                  registry-url: https://registry.npmjs.org/
+            - name: npm install and test
+              run: |
+                  npm ci
+                  npx jest --no-cache --ci
+              env:
+                  CI: true
+            - name: deno test
+              run: |
+                  cd deno
+                  deno test
+            - name: build
+              run: npm run build
+              env:
+                  CI: true
+            - name: publish
+              run: npm publish --access public
+              env:
+                  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
