@@ -6,11 +6,11 @@
     "types": "./dist/typings/index.d.ts",
     "module": "./dist/esm/index.js",
     "scripts": {
-        "build": "rollup -c",
-        "watch": "rollup -cw",
-        "start": "node ./dist/bundle.js",
+        "build": "npm run clean && rollup -c",
+        "watch": "npm run clean && rollup -cw",
         "test": "jest",
-        "test:watch": "jest --watchAll"
+        "test:watch": "jest --watchAll",
+        "clean": "gulp clean"
     },
     "repository": {
         "type": "git",
