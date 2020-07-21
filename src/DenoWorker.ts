@@ -14,6 +14,12 @@ const DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH = __dirname.endsWith('src')
 
 export interface DenoWorkerOptions {
     /**
+     * The path to the executable that should be use when spawning the subprocess.
+     * Defaults to "deno".
+     */
+    denoExecutable: string;
+
+    /**
      * The path to the script that should be used to bootstrap the worker environment in Deno.
      * If specified, this script will be used instead of the default bootstrap script.
      * Only advanced users should set this.
@@ -110,6 +116,7 @@ export class DenoWorker {
         this._available = false;
         this._options = Object.assign(
             {
+                denoExecutable: 'deno',
                 denoBootstrapScriptPath: DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH,
                 reload: process.env.NODE_ENV !== 'production',
                 permissions: {},
@@ -221,7 +228,7 @@ export class DenoWorker {
                 );
             }
 
-            this._process = spawn('deno', [
+            this._process = spawn(this._options.denoExecutable, [
                 'run',
                 ...runArgs,
                 this._options.denoBootstrapScriptPath,
