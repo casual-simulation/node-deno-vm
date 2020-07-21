@@ -186,6 +186,18 @@ Deno.test(
     }
 );
 
+Deno.test('serializeStructure() should support BigInt objects', () => {
+    assertEquals(serializeStructure(BigInt(989898434684646)), {
+        root: ['$0'],
+        refs: {
+            $0: {
+                root: '989898434684646',
+                type: 'BigInt',
+            },
+        },
+    });
+});
+
 Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
@@ -368,3 +380,18 @@ Deno.test(
         }
     }
 );
+
+Deno.test('deserializeStructure() should support BigInt objects', () => {
+    assertEquals(
+        deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: '989898434684646',
+                    type: 'BigInt',
+                },
+            },
+        }),
+        BigInt(989898434684646)
+    );
+});

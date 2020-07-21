@@ -26,7 +26,10 @@ export function serializeStructure(
     value: unknown,
     transferrable?: Transferrable[]
 ): Structure | StructureWithRefs {
-    if (typeof value !== 'object' || value === null) {
+    if (
+        (typeof value !== 'object' && typeof value !== 'bigint') ||
+        value === null
+    ) {
         return {
             root: value,
         };
@@ -61,7 +64,7 @@ export function deserializeStructure(value: Structure | StructureWithRefs) {
 }
 
 function _serializeObject(value: unknown, map: Map<any, MapRef>) {
-    if (typeof value !== 'object') {
+    if (typeof value !== 'object' && typeof value !== 'bigint') {
         return value;
     }
     const ref = map.get(value);
@@ -96,6 +99,18 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             root: encode(new Uint8Array(value)),
             type: value.constructor.name,
         } as Ref;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj: ref,
+        });
+        return [id];
+    } else if (typeof value === 'bigint') {
+        const root = value.toString();
+        const ref = {
+            root,
+            type: 'BigInt',
+        } as const;
         (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
         map.set(value, {
             id,
@@ -156,7 +171,7 @@ function _deserializeRef(
             'Int8Array',
             'Int16Array',
             'Int32Array',
-        ] as const;
+        ];
         if (types.indexOf(refData.type) >= 0) {
             const bytes = new Uint8Array(decode(refData.root));
             const final =
@@ -198,6 +213,10 @@ function _deserializeRef(
                           bytes.byteLength / Uint32Array.BYTES_PER_ELEMENT
                       )
                     : null;
+            map.set(ref, final);
+            return final;
+        } else if (refData.type === 'BigInt') {
+            const final = BigInt(refData.root);
             map.set(ref, final);
             return final;
         }
@@ -255,5 +274,6 @@ export interface Ref {
         | 'Uint32Array'
         | 'Int8Array'
         | 'Int16Array'
-        | 'Int32Array';
+        | 'Int32Array'
+        | 'BigInt';
 }

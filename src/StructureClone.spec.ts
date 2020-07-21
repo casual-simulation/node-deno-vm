@@ -184,6 +184,18 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it('should support BigInt objects', () => {
+            expect(serializeStructure(BigInt(989898434684646))).toEqual({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: '989898434684646',
+                        type: 'BigInt',
+                    },
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -325,6 +337,20 @@ describe('StructureClone', () => {
                     },
                 })
             ).toEqual(obj1);
+        });
+
+        it('should support BigInt objects', () => {
+            expect(
+                deserializeStructure({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: '989898434684646',
+                            type: 'BigInt',
+                        },
+                    },
+                })
+            ).toEqual(BigInt(989898434684646));
         });
     });
 });

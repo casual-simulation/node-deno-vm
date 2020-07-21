@@ -26,7 +26,10 @@ export function serializeStructure(
     value: unknown,
     transferrable?: Transferrable[]
 ): Structure {
-    if (typeof value !== 'object' || value === null) {
+    if (
+        (typeof value !== 'object' && typeof value !== 'bigint') ||
+        value === null
+    ) {
         return {
             root: value,
         };
@@ -65,7 +68,7 @@ export function deserializeStructure(value: Structure) {
 }
 
 function _serializeObject(value: unknown, map: Map<any, MapRef>) {
-    if (typeof value !== 'object') {
+    if (typeof value !== 'object' && typeof value !== 'bigint') {
         return value;
     }
     if (map.has(value)) {
@@ -96,6 +99,18 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             ),
             type: value.constructor.name,
         } as Ref;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj: ref,
+        });
+        return [id];
+    } else if (typeof value === 'bigint') {
+        const root = value.toString();
+        const ref = {
+            root,
+            type: 'BigInt',
+        } as const;
         (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
         map.set(value, {
             id,
@@ -145,7 +160,7 @@ function _deserializeRef(
     const refData = structure.refs[ref];
 
     if ('type' in refData) {
-        const types = [
+        const arrayTypes = [
             'ArrayBuffer',
             'Uint8Array',
             'Uint16Array',
@@ -153,8 +168,8 @@ function _deserializeRef(
             'Int8Array',
             'Int16Array',
             'Int32Array',
-        ] as const;
-        if (types.indexOf(refData.type) >= 0) {
+        ];
+        if (arrayTypes.indexOf(refData.type) >= 0) {
             const bytes = toByteArray(refData.root);
             const final =
                 refData.type == 'Uint8Array'
@@ -195,6 +210,10 @@ function _deserializeRef(
                           bytes.byteLength / Uint32Array.BYTES_PER_ELEMENT
                       )
                     : null;
+            map.set(ref, final);
+            return final;
+        } else if (refData.type === 'BigInt') {
+            const final = BigInt(refData.root);
             map.set(ref, final);
             return final;
         }
@@ -248,5 +267,6 @@ export interface Ref {
         | 'Uint32Array'
         | 'Int8Array'
         | 'Int16Array'
-        | 'Int32Array';
+        | 'Int32Array'
+        | 'BigInt';
 }
