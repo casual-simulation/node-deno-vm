@@ -141,6 +141,20 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             obj,
         });
         return [id];
+    } else if (value instanceof RegExp) {
+        const obj = {
+            root: {
+                source: value.source,
+                flags: value.flags,
+            },
+            type: 'RegExp',
+        } as const;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj,
+        });
+        return [id];
     } else if (value instanceof Object) {
         let root = {} as any;
         let ref = {
@@ -234,6 +248,10 @@ function _deserializeRef(
             const final = new Date(refData.root);
             map.set(ref, final);
             return final;
+        } else if (refData.type === 'RegExp') {
+            const final = new RegExp(refData.root.source, refData.root.flags);
+            map.set(ref, final);
+            return final;
         }
     } else if (Array.isArray(refData.root)) {
         let arr = [] as any[];
@@ -291,5 +309,6 @@ export interface Ref {
         | 'Int16Array'
         | 'Int32Array'
         | 'BigInt'
-        | 'Date';
+        | 'Date'
+        | 'RegExp';
 }

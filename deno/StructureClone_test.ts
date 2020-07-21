@@ -210,6 +210,21 @@ Deno.test('serializeStructure() should support Date objects', () => {
     });
 });
 
+Deno.test('serializeStructure() should support RegExp objects', () => {
+    assertEquals(serializeStructure(new RegExp('^abc$', 'gi')), {
+        root: ['$0'],
+        refs: {
+            $0: {
+                root: {
+                    source: '^abc$',
+                    flags: 'gi',
+                },
+                type: 'RegExp',
+            },
+        },
+    });
+});
+
 Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
@@ -420,5 +435,23 @@ Deno.test('deserializeStructure() should support Date objects', () => {
             },
         }),
         new Date('2020-07-21T00:00:00.000Z')
+    );
+});
+
+Deno.test('deserializeStructure() should support RegExp objects', () => {
+    assertEquals(
+        deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: {
+                        source: '^abc$',
+                        flags: 'gi',
+                    },
+                    type: 'RegExp',
+                },
+            },
+        }),
+        new RegExp('^abc$', 'gi')
     );
 });

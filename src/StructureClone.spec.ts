@@ -210,6 +210,21 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it('should support RegExp objects', () => {
+            expect(serializeStructure(new RegExp('^abc$', 'gi'))).toEqual({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            source: '^abc$',
+                            flags: 'gi',
+                        },
+                        type: 'RegExp',
+                    },
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -379,6 +394,23 @@ describe('StructureClone', () => {
                     },
                 })
             ).toEqual(new Date('2020-07-21T00:00:00.000Z'));
+        });
+
+        it('should support RegExp objects', () => {
+            expect(
+                deserializeStructure({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: {
+                                source: '^abc$',
+                                flags: 'gi',
+                            },
+                            type: 'RegExp',
+                        },
+                    },
+                })
+            ).toEqual(new RegExp('^abc$', 'gi'));
         });
     });
 });
