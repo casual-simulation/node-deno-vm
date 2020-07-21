@@ -20,6 +20,13 @@ export default [
                 useTsconfigDeclarationDir: true,
             }),
         ],
-        external: ['http', 'ws', 'child_process', 'base64-js'],
+        external: [
+            'http',
+            'ws',
+            'child_process',
+            'base64-js',
+            'path',
+            'process',
+        ],
     },
 ];
