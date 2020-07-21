@@ -4,6 +4,8 @@
 
 A VM module for Node.js that utilizes the secure environment provided by Deno.
 
+[API Documentation](https://docs.casualsimulation.com/node-deno-vm/)
+
 ## Features
 
 -   Secure out-of-process VM environment provided by [Deno](https://deno.land).
