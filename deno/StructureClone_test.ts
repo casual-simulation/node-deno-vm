@@ -12,6 +12,16 @@ const arrayTypes = [
     ['Int32Array'],
 ];
 
+const errorCases = [
+    [Error],
+    [EvalError],
+    [RangeError],
+    [ReferenceError],
+    [SyntaxError],
+    [TypeError],
+    [URIError],
+];
+
 Deno.test('serializeStructure() should return an object with root', () => {
     for (let [value] of primitives) {
         assertEquals(serializeStructure(value), {
@@ -272,6 +282,25 @@ Deno.test('serializeStructure() should support Set objects', () => {
             },
         }
     );
+});
+
+Deno.test('serializeStructure() should support Error objects', () => {
+    for (let [type] of errorCases as any) {
+        const err = new type('abc');
+        assertEquals(serializeStructure(err), {
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: {
+                        name: err.name,
+                        message: 'abc',
+                        stack: err.stack,
+                    },
+                    type: 'Error',
+                },
+            },
+        });
+    }
 });
 
 Deno.test(
@@ -548,4 +577,26 @@ Deno.test('deserializeStructure() should support Set objects', () => {
         }),
         new Set<any>(['abc', 'def', 99, { name: 'bob' }])
     );
+});
+
+Deno.test('deserializeStructure() should support Error objects', () => {
+    for (let [type] of errorCases as any) {
+        const err = new type('abc');
+        assertEquals(
+            deserializeStructure({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            name: err.name,
+                            message: 'abc',
+                            stack: err.stack,
+                        },
+                        type: 'Error',
+                    },
+                },
+            }),
+            err
+        );
+    }
 });

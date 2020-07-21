@@ -185,6 +185,21 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             root.push(_serializeObject(prop, map));
         }
         return [id];
+    } else if (value instanceof Error) {
+        let obj = {
+            root: {
+                name: value.name,
+                message: value.message,
+                stack: value.stack,
+            },
+            type: 'Error',
+        } as const;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj,
+        });
+        return [id];
     } else if (value instanceof Object) {
         let root = {} as any;
         let ref = {
@@ -300,6 +315,39 @@ function _deserializeRef(
                 final.add(val);
             }
             return final;
+        } else if (refData.type === 'Error') {
+            let proto = Error.prototype;
+            if (refData.root.name === 'EvalError') {
+                proto = EvalError.prototype;
+            } else if (refData.root.name === 'RangeError') {
+                proto = RangeError.prototype;
+            } else if (refData.root.name === 'ReferenceError') {
+                proto = ReferenceError.prototype;
+            } else if (refData.root.name === 'SyntaxError') {
+                proto = SyntaxError.prototype;
+            } else if (refData.root.name === 'TypeError') {
+                proto = TypeError.prototype;
+            } else if (refData.root.name === 'URIError') {
+                proto = URIError.prototype;
+            }
+            let final = Object.create(proto);
+            if (typeof refData.root.message !== 'undefined') {
+                Object.defineProperty(final, 'message', {
+                    value: refData.root.message,
+                    writable: true,
+                    enumerable: false,
+                    configurable: true,
+                });
+            }
+            if (typeof refData.root.stack !== 'undefined') {
+                Object.defineProperty(final, 'stack', {
+                    value: refData.root.stack,
+                    writable: true,
+                    enumerable: false,
+                    configurable: true,
+                });
+            }
+            return final;
         }
     } else if (Array.isArray(refData.root)) {
         let arr = [] as any[];
@@ -360,5 +408,6 @@ export interface Ref {
         | 'Date'
         | 'RegExp'
         | 'Map'
-        | 'Set';
+        | 'Set'
+        | 'Error';
 }

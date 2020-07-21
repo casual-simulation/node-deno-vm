@@ -18,6 +18,15 @@ describe('StructureClone', () => {
         ['Int16Array'],
         ['Int32Array'],
     ];
+    const errorCases = [
+        ['Error', Error],
+        ['EvalError', EvalError],
+        ['RangeError', RangeError],
+        ['ReferenceError', ReferenceError],
+        ['SyntaxError', SyntaxError],
+        ['TypeError', TypeError],
+        ['URIError', URIError],
+    ];
     describe('serializeStructure()', () => {
         it.each(primitives)(
             'should return an object with root set to %s',
@@ -272,6 +281,26 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it.each(errorCases)(
+            'should support %s objects',
+            (desc: string, type: any) => {
+                const err = new type('abc');
+                expect(serializeStructure(err)).toEqual({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: {
+                                name: err.name,
+                                message: 'abc',
+                                stack: err.stack,
+                            },
+                            type: 'Error',
+                        },
+                    },
+                });
+            }
+        );
     });
 
     describe('deserializeStructure', () => {
@@ -506,5 +535,27 @@ describe('StructureClone', () => {
                 new Set<any>(['abc', 'def', 99, { name: 'bob' }])
             );
         });
+
+        it.each(errorCases)(
+            'should support %s objects',
+            (desc: string, type: any) => {
+                const err = new type('abc');
+                expect(
+                    deserializeStructure({
+                        root: ['$0'],
+                        refs: {
+                            $0: {
+                                root: {
+                                    name: err.name,
+                                    message: 'abc',
+                                    stack: err.stack,
+                                },
+                                type: 'Error',
+                            },
+                        },
+                    })
+                ).toEqual(err);
+            }
+        );
     });
 });
