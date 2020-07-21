@@ -4,7 +4,7 @@ const childProcess = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-let folders = [`${__dirname}/dist`];
+let folders = [`${__dirname}/dist`, `${__dirname}/docs`];
 
 gulp.task('clean', function () {
     return del(folders);

@@ -37,3 +37,11 @@ jobs:
               run: npm publish --access public
               env:
                   NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            - name: build docs
+              run: npm run build:docs
+            - name: publish docs
+              uses: JamesIves/github-pages-deploy-action@3.5.7
+              with:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  BRANCH: gh-pages # The branch the action should deploy to.
+                  FOLDER: docs # The folder the action should deploy.

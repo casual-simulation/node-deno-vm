@@ -10,7 +10,8 @@
         "watch": "npm run clean && rollup -cw",
         "test": "jest",
         "test:watch": "jest --watchAll",
-        "clean": "gulp clean"
+        "clean": "gulp clean",
+        "build:docs": "typedoc --out ./docs ./src"
     },
     "repository": {
         "type": "git",
@@ -47,7 +48,8 @@
         "typescript": "^3.9.7",
         "tslib": "2.0.0",
         "gulp": "^4.0.0",
-        "del": "^3.0.0"
+        "del": "^3.0.0",
+        "typedoc": "^0.17.8"
     },
     "dependencies": {
         "ws": "^7.3.1",
