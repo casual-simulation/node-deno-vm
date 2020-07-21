@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
+        "declarationDir": "./dist/typings",
+        "declaration": true,
         "noImplicitAny": true,
         "module": "esNext",
         "esModuleInterop": true,
