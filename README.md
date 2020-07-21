@@ -8,7 +8,17 @@ A VM module for Node.js that utilizes the secure environment provided by Deno.
 
 -   Secure out-of-process VM environment provided by [Deno](https://deno.land).
 -   Web Worker-like API
--   Node.js Client
+-   Supports Windows, MacOS, and Linux.
+-   Tunable permissions (via Deno's permissions).
+-   Supports passing ArrayBuffer, TypedArray, Maps, Sets, Dates, RegExp, Errors, and circular objects.
+
+## Installation
+
+Note that [Deno](https://deno.land/) needs to be installed and available on the PATH.
+
+```
+npm install deno-vm
+```
 
 ## Usage
 
