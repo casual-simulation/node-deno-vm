@@ -225,6 +225,35 @@ Deno.test('serializeStructure() should support RegExp objects', () => {
     });
 });
 
+Deno.test('serializeStructure() should support Map objects', () => {
+    assertEquals(
+        serializeStructure(
+            new Map<any, any>([
+                ['key', 'value'],
+                [{ name: 'bob' }, 99],
+            ])
+        ),
+        {
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: [['$1'], ['$2']],
+                    type: 'Map',
+                },
+                $1: {
+                    root: ['key', 'value'],
+                },
+                $2: {
+                    root: [['$3'], 99],
+                },
+                $3: {
+                    root: { name: 'bob' },
+                },
+            },
+        }
+    );
+});
+
 Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
@@ -453,5 +482,32 @@ Deno.test('deserializeStructure() should support RegExp objects', () => {
             },
         }),
         new RegExp('^abc$', 'gi')
+    );
+});
+
+Deno.test('deserializeStructure() should support Map objects', () => {
+    assertEquals(
+        deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: [['$1'], ['$2']],
+                    type: 'Map',
+                },
+                $1: {
+                    root: ['key', 'value'],
+                },
+                $2: {
+                    root: [['$3'], 99],
+                },
+                $3: {
+                    root: { name: 'bob' },
+                },
+            },
+        }),
+        new Map<any, any>([
+            ['key', 'value'],
+            [{ name: 'bob' }, 99],
+        ])
     );
 });

@@ -225,6 +225,34 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it('should support Map objects', () => {
+            expect(
+                serializeStructure(
+                    new Map<any, any>([
+                        ['key', 'value'],
+                        [{ name: 'bob' }, 99],
+                    ])
+                )
+            ).toEqual({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: [['$1'], ['$2']],
+                        type: 'Map',
+                    },
+                    $1: {
+                        root: ['key', 'value'],
+                    },
+                    $2: {
+                        root: [['$3'], 99],
+                    },
+                    $3: {
+                        root: { name: 'bob' },
+                    },
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -411,6 +439,34 @@ describe('StructureClone', () => {
                     },
                 })
             ).toEqual(new RegExp('^abc$', 'gi'));
+        });
+
+        it('should support Map objects', () => {
+            expect(
+                deserializeStructure({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: [['$1'], ['$2']],
+                            type: 'Map',
+                        },
+                        $1: {
+                            root: ['key', 'value'],
+                        },
+                        $2: {
+                            root: [['$3'], 99],
+                        },
+                        $3: {
+                            root: { name: 'bob' },
+                        },
+                    },
+                })
+            ).toEqual(
+                new Map<any, any>([
+                    ['key', 'value'],
+                    [{ name: 'bob' }, 99],
+                ])
+            );
         });
     });
 });
