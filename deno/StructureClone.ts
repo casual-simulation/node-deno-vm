@@ -130,6 +130,17 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             root.push(_serializeObject(prop, map));
         }
         return [id];
+    } else if (value instanceof Date) {
+        const obj = {
+            root: value.toISOString(),
+            type: 'Date',
+        } as const;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj,
+        });
+        return [id];
     } else if (value instanceof Object) {
         let root = {} as any;
         let ref = {
@@ -219,6 +230,10 @@ function _deserializeRef(
             const final = BigInt(refData.root);
             map.set(ref, final);
             return final;
+        } else if (refData.type === 'Date') {
+            const final = new Date(refData.root);
+            map.set(ref, final);
+            return final;
         }
     } else if (Array.isArray(refData.root)) {
         let arr = [] as any[];
@@ -275,5 +290,6 @@ export interface Ref {
         | 'Int8Array'
         | 'Int16Array'
         | 'Int32Array'
-        | 'BigInt';
+        | 'BigInt'
+        | 'Date';
 }

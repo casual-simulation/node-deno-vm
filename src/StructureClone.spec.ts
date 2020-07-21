@@ -196,6 +196,20 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it('should support Date objects', () => {
+            expect(
+                serializeStructure(new Date('2020-07-21T00:00:00.000Z'))
+            ).toEqual({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: '2020-07-21T00:00:00.000Z',
+                        type: 'Date',
+                    },
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -351,6 +365,20 @@ describe('StructureClone', () => {
                     },
                 })
             ).toEqual(BigInt(989898434684646));
+        });
+
+        it('should support Date objects', () => {
+            expect(
+                deserializeStructure({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: '2020-07-21T00:00:00.000Z',
+                            type: 'Date',
+                        },
+                    },
+                })
+            ).toEqual(new Date('2020-07-21T00:00:00.000Z'));
         });
     });
 });

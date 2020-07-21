@@ -198,6 +198,18 @@ Deno.test('serializeStructure() should support BigInt objects', () => {
     });
 });
 
+Deno.test('serializeStructure() should support Date objects', () => {
+    assertEquals(serializeStructure(new Date('2020-07-21T00:00:00.000Z')), {
+        root: ['$0'],
+        refs: {
+            $0: {
+                root: '2020-07-21T00:00:00.000Z',
+                type: 'Date',
+            },
+        },
+    });
+});
+
 Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
@@ -393,5 +405,20 @@ Deno.test('deserializeStructure() should support BigInt objects', () => {
             },
         }),
         BigInt(989898434684646)
+    );
+});
+
+Deno.test('deserializeStructure() should support Date objects', () => {
+    assertEquals(
+        deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: '2020-07-21T00:00:00.000Z',
+                    type: 'Date',
+                },
+            },
+        }),
+        new Date('2020-07-21T00:00:00.000Z')
     );
 });
