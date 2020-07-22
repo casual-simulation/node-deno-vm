@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.0
+
+### Date: 7/22/2020
+
+### Changes:
+
+-   Added the ability to transfer `MessagePort` instances between the host and worker.
+
 ## v0.5.0
 
 ### Date: 7/21/2020
