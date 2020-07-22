@@ -1,6 +1,6 @@
 # deno-vm
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/casual-simulation/node-deno-vm/Continuous%20Integration)](https://github.com/casual-simulation/node-deno-vm/actions?query=workflow%3A%22Continuous+Integration%22)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/casual-simulation/node-deno-vm/Continuous%20Integration)](https://github.com/casual-simulation/node-deno-vm/actions?query=workflow%3A%22Continuous+Integration%22) [![npm](https://img.shields.io/npm/v/deno-vm)](https://www.npmjs.com/package/deno-vm)
 
 A VM module for Node.js that utilizes the secure environment provided by Deno.
 
