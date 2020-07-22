@@ -2,10 +2,19 @@ import { createServer, Server } from 'http';
 import WebSocket, { Server as WSServer } from 'ws';
 import { resolve } from 'path';
 import { ChildProcess, spawn } from 'child_process';
-import { serializeStructure, deserializeStructure } from './StructureClone';
+import {
+    serializeStructure,
+    deserializeStructure,
+    Structure,
+} from './StructureClone';
 import { URL } from 'url';
 import process from 'process';
-import { OnMessageListener, MessageEvent, Transferrable } from './MessageTarget';
+import {
+    OnMessageListener,
+    MessageEvent,
+    Transferrable,
+} from './MessageTarget';
+import { MessagePort } from './MessageChannel';
 
 const DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH = __dirname.endsWith('src')
     ? resolve(__dirname, '../deno/index.ts')
@@ -104,6 +113,8 @@ export class DenoWorker {
     private _available: boolean;
     private _pendingMessages: string[];
     private _options: DenoWorkerOptions;
+    private _ports: Map<number, MessagePortData>;
+    private _terminated: boolean;
 
     /**
      * Creates a new DenoWorker instance and injects the given script.
@@ -122,6 +133,7 @@ export class DenoWorker {
             },
             options || {}
         );
+        this._ports = new Map();
         this._httpServer = createServer();
         this._server = new WSServer({
             server: this._httpServer,
@@ -134,10 +146,16 @@ export class DenoWorker {
             this._socket = socket;
             socket.on('message', (message) => {
                 if (typeof message === 'string') {
-                    const structuredData = JSON.parse(message);
-                    const data = deserializeStructure(structuredData);
+                    const structuredData = JSON.parse(message) as Structure;
+                    const channel = structuredData.channel;
+                    const deserialized = deserializeStructure(structuredData);
+                    const data = deserialized.data;
 
-                    if (!this._available && data.type === 'init') {
+                    if (deserialized.transferred) {
+                        this._handleTransferrables(deserialized.transferred);
+                    }
+
+                    if (!this._available && data && data.type === 'init') {
                         this._available = true;
                         let pendingMessages = this._pendingMessages;
                         this._pendingMessages = [];
@@ -145,14 +163,21 @@ export class DenoWorker {
                             socket.send(message);
                         }
                     } else {
-                        const event = {
-                            data,
-                        } as MessageEvent;
-                        if (this.onmessage) {
-                            this.onmessage(event);
-                        }
-                        for (let onmessage of this._onmessageListeners) {
-                            onmessage(event);
+                        if (typeof channel === 'number') {
+                            const portData = this._ports.get(channel);
+                            if (portData) {
+                                portData.recieveData(data);
+                            }
+                        } else {
+                            const event = {
+                                data,
+                            } as MessageEvent;
+                            if (this.onmessage) {
+                                this.onmessage(event);
+                            }
+                            for (let onmessage of this._onmessageListeners) {
+                                onmessage(event);
+                            }
                         }
                     }
                 }
@@ -165,6 +190,9 @@ export class DenoWorker {
         });
 
         this._httpServer.listen({ host: '127.0.0.1', port: 0 }, () => {
+            if (this._terminated) {
+                return;
+            }
             const addr = this._httpServer.address();
             let connectAddress: string;
             let allowAddress: string;
@@ -257,19 +285,14 @@ export class DenoWorker {
      * @param transfer Values that should be transferred. This should include any typed arrays that are referenced in the data.
      */
     postMessage(data: any, transfer?: Transferrable[]): void {
-        const structuredData = serializeStructure(data, transfer);
-        const json = JSON.stringify(structuredData);
-        if (!this._available) {
-            this._pendingMessages.push(json);
-        } else if (this._socket) {
-            this._socket.send(json);
-        }
+        return this._postMessage(null, data, transfer);
     }
 
     /**
      * Terminiates the worker and cleans up unused resources.
      */
     terminate() {
+        this._terminated = true;
         if (this._process) {
             this._process.kill();
             this._process = null;
@@ -310,6 +333,42 @@ export class DenoWorker {
             }
         }
     }
+
+    private _postMessage(
+        channel: number | null,
+        data: any,
+        transfer?: Transferrable[]
+    ) {
+        this._handleTransferrables(transfer);
+        const structuredData = serializeStructure(data, transfer);
+        if (channel !== null) {
+            structuredData.channel = channel;
+        }
+        const json = JSON.stringify(structuredData);
+        if (!this._available) {
+            this._pendingMessages.push(json);
+        } else if (this._socket) {
+            this._socket.send(json);
+        }
+    }
+
+    private _handleTransferrables(transfer?: Transferrable[]) {
+        if (transfer) {
+            for (let t of transfer) {
+                if (t instanceof MessagePort) {
+                    if (!t.transferred) {
+                        const channelID = t.channelID;
+                        this._ports.set(t.channelID, {
+                            port: t,
+                            recieveData: t.transfer((data, transfer) => {
+                                this._postMessage(channelID, data, transfer);
+                            }),
+                        });
+                    }
+                }
+            }
+        }
+    }
 }
 
 function addOption(list: string[], name: string, option: boolean | string[]) {
@@ -320,4 +379,9 @@ function addOption(list: string[], name: string, option: boolean | string[]) {
             list.push(`${name}=${script}`);
         }
     }
+}
+
+interface MessagePortData {
+    port: MessagePort;
+    recieveData: (data: any) => void;
 }

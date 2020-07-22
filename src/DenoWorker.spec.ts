@@ -2,13 +2,17 @@ import { DenoWorker } from './DenoWorker';
 import { readFileSync } from 'fs';
 import path from 'path';
 import { URL } from 'url';
+import { MessageChannel, MessagePort } from './MessageChannel';
 
 console.log = jest.fn();
+jest.setTimeout(10000);
 
 describe('DenoWorker', () => {
     let worker: DenoWorker;
-    const file = path.resolve(__dirname, './test/echo.js');
-    const echoScript = readFileSync(file, { encoding: 'utf-8' });
+    const echoFile = path.resolve(__dirname, './test/echo.js');
+    const echoScript = readFileSync(echoFile, { encoding: 'utf-8' });
+    const pingFile = path.resolve(__dirname, './test/ping.js');
+    const pingScript = readFileSync(pingFile, { encoding: 'utf-8' });
 
     afterEach(() => {
         if (worker) {
@@ -181,6 +185,70 @@ describe('DenoWorker', () => {
                 type: 'echo',
                 error: new Error('my error'),
             });
+        });
+    });
+
+    describe('transfer', () => {
+        beforeEach(() => {
+            worker = new DenoWorker(pingScript);
+        });
+
+        it('should be able to pass a MessagePort to the worker', async () => {
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+
+            let channel = new MessageChannel();
+            channel.port1.onmessage = (e) => {
+                resolve(e.data);
+            };
+            worker.postMessage(
+                {
+                    type: 'port',
+                    port: channel.port2,
+                },
+                [channel.port2]
+            );
+
+            channel.port1.postMessage('ping');
+
+            let ret = await promise;
+
+            expect(ret).toEqual('pong');
+        });
+
+        it('should be able to recieve a MessagePort from the worker', async () => {
+            let resolve: any;
+            let promise1 = new Promise<any>((res, rej) => {
+                resolve = res;
+            });
+
+            worker.onmessage = (e) => {
+                resolve(e.data);
+            };
+
+            worker.postMessage({
+                type: 'request_port',
+            });
+
+            let ret = await promise1;
+
+            let promise2 = new Promise<any>((res, rej) => {
+                resolve = res;
+            });
+
+            expect(ret.type).toEqual('port');
+            expect(ret.port).toBeInstanceOf(MessagePort);
+
+            ret.port.onmessage = (e: any) => {
+                resolve(e.data);
+            };
+            ret.port.postMessage('ping');
+
+            let final = await promise2;
+
+            expect(final).toEqual('pong');
         });
     });
 });

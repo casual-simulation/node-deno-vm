@@ -1,5 +1,10 @@
-import { assertEquals, assert } from 'https://deno.land/std/testing/asserts.ts';
+import {
+    assertEquals,
+    assert,
+    assertThrows,
+} from 'https://deno.land/std/testing/asserts.ts';
 import { serializeStructure, deserializeStructure } from './StructureClone.ts';
+import { MessagePort } from './MessageChannel.ts';
 
 const primitives = [[true], [false], [0], [1], ['string'], [undefined], [null]];
 
@@ -304,6 +309,40 @@ Deno.test('serializeStructure() should support Error objects', () => {
 });
 
 Deno.test(
+    'serializeStructure() should require MessagePort objects to be transferred',
+    () => {
+        const port = new MessagePort(99);
+
+        assertThrows(
+            () => {
+                serializeStructure(port, [port]);
+            },
+            Error,
+            'Port must be transferred before serialization. Did you forget to add it to the transfer list?'
+        );
+    }
+);
+
+Deno.test('serializeStructure() should support MessagePort objects', () => {
+    const port1 = new MessagePort(99);
+    const port2 = new MessagePort(99);
+    MessagePort.link(port1, port2);
+    port1.transfer(() => {});
+
+    assertEquals(serializeStructure(port1, [port1]), {
+        root: ['$0'],
+        refs: {
+            $0: {
+                root: {
+                    channel: 99,
+                },
+                type: 'MessagePort',
+            },
+        },
+    });
+});
+
+Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
         for (let [value] of primitives) {
@@ -311,7 +350,10 @@ Deno.test(
                 deserializeStructure({
                     root: value,
                 }),
-                value
+                {
+                    data: value,
+                    transferred: [],
+                }
             );
         }
     }
@@ -332,7 +374,7 @@ Deno.test('deserializeStructure() should deserialize circular objects', () => {
 
     obj3.obj1 = obj1;
 
-    const result = deserializeStructure({
+    const deserialized = deserializeStructure({
         root: ['$0'],
         refs: {
             $0: {
@@ -355,6 +397,7 @@ Deno.test('deserializeStructure() should deserialize circular objects', () => {
             },
         },
     });
+    const result = deserialized.data;
 
     // Can't use assertEquals because it doesn't handle the circular reference for some reason.
     assert(typeof result === 'object');
@@ -373,7 +416,10 @@ Deno.test(
             deserializeStructure({
                 root: ['abc', 'def', 123, true, { message: 'Hello' }],
             }),
-            ['abc', 'def', 123, true, { message: 'Hello' }]
+            {
+                data: ['abc', 'def', 123, true, { message: 'Hello' }],
+                transferred: [],
+            }
         );
     }
 );
@@ -385,7 +431,10 @@ Deno.test(
             deserializeStructure({
                 root: ['abc', 'def', 123, true, { message: 'Hello' }],
             }),
-            ['abc', 'def', 123, true, { message: 'Hello' }]
+            {
+                data: ['abc', 'def', 123, true, { message: 'Hello' }],
+                transferred: [],
+            }
         );
     }
 );
@@ -396,7 +445,7 @@ Deno.test('deserializeStructure() should deserialize circular arrays', () => {
     let arr1 = ['arr1', arr2];
     arr3.push(arr1);
 
-    const result = deserializeStructure({
+    const deserialized = deserializeStructure({
         root: ['$0'],
         refs: {
             $0: {
@@ -410,6 +459,7 @@ Deno.test('deserializeStructure() should deserialize circular arrays', () => {
             },
         },
     });
+    const result = deserialized.data;
 
     // Can't use assertEquals because it doesn't handle the circular reference for some reason.
     assert(typeof result === 'object');
@@ -447,7 +497,10 @@ Deno.test(
                     },
                 },
             }),
-            obj1
+            {
+                data: obj1,
+                transferred: [],
+            }
         );
     }
 );
@@ -480,7 +533,10 @@ Deno.test(
                         },
                     },
                 }),
-                obj1
+                {
+                    data: obj1,
+                    transferred: [],
+                }
             );
         }
     }
@@ -497,7 +553,10 @@ Deno.test('deserializeStructure() should support BigInt objects', () => {
                 },
             },
         }),
-        BigInt(989898434684646)
+        {
+            data: BigInt(989898434684646),
+            transferred: [],
+        }
     );
 });
 
@@ -512,7 +571,10 @@ Deno.test('deserializeStructure() should support Date objects', () => {
                 },
             },
         }),
-        new Date('2020-07-21T00:00:00.000Z')
+        {
+            data: new Date('2020-07-21T00:00:00.000Z'),
+            transferred: [],
+        }
     );
 });
 
@@ -530,7 +592,10 @@ Deno.test('deserializeStructure() should support RegExp objects', () => {
                 },
             },
         }),
-        new RegExp('^abc$', 'gi')
+        {
+            data: new RegExp('^abc$', 'gi'),
+            transferred: [],
+        }
     );
 });
 
@@ -554,10 +619,13 @@ Deno.test('deserializeStructure() should support Map objects', () => {
                 },
             },
         }),
-        new Map<any, any>([
-            ['key', 'value'],
-            [{ name: 'bob' }, 99],
-        ])
+        {
+            data: new Map<any, any>([
+                ['key', 'value'],
+                [{ name: 'bob' }, 99],
+            ]),
+            transferred: [],
+        }
     );
 });
 
@@ -575,7 +643,10 @@ Deno.test('deserializeStructure() should support Set objects', () => {
                 },
             },
         }),
-        new Set<any>(['abc', 'def', 99, { name: 'bob' }])
+        {
+            data: new Set<any>(['abc', 'def', 99, { name: 'bob' }]),
+            transferred: [],
+        }
     );
 });
 
@@ -596,7 +667,51 @@ Deno.test('deserializeStructure() should support Error objects', () => {
                     },
                 },
             }),
-            err
+            {
+                data: err,
+                transferred: [],
+            }
         );
     }
 });
+
+Deno.test('deserializeStructure() should support MessagePort objects', () => {
+    const port1 = new MessagePort(99);
+
+    const { data, transferred } = deserializeStructure({
+        root: ['$0'],
+        refs: {
+            $0: {
+                root: {
+                    channel: 99,
+                },
+                type: 'MessagePort',
+            },
+        },
+    });
+
+    assert(typeof data === 'object');
+    assert(data instanceof MessagePort);
+    assert(Object.getPrototypeOf(data) === Object.getPrototypeOf(port1));
+    assert(data.channelID === 99);
+    assert(transferred[0] !== data);
+});
+
+Deno.test(
+    'deserializeStructure() should have a different port for the transferred from in the data',
+    () => {
+        const deserialized = deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: {
+                        channel: 99,
+                    },
+                    type: 'MessagePort',
+                },
+            },
+        });
+
+        assert(deserialized.data !== deserialized.transferred[0]);
+    }
+);

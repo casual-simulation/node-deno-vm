@@ -54,7 +54,7 @@ Deno.test(
             sent.push([data, list]);
         });
 
-        channel.port1.postMessage({
+        channel.port2.postMessage({
             hello: 'world',
         });
 

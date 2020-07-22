@@ -1,4 +1,5 @@
 import { serializeStructure, deserializeStructure } from './StructureClone';
+import { MessagePort, MessageChannel } from './MessageChannel';
 
 describe('StructureClone', () => {
     const primitives = [
@@ -301,6 +302,37 @@ describe('StructureClone', () => {
                 });
             }
         );
+
+        it('should require MessagePort objects to be transferred', () => {
+            const port = new MessagePort(99);
+
+            expect(() => {
+                serializeStructure(port, [port]);
+            }).toThrow(
+                new Error(
+                    'Port must be transferred before serialization. Did you forget to add it to the transfer list?'
+                )
+            );
+        });
+
+        it('should support MessagePort objects', () => {
+            const port1 = new MessagePort(99);
+            const port2 = new MessagePort(99);
+            MessagePort.link(port1, port2);
+            port1.transfer(() => {});
+
+            expect(serializeStructure(port1, [port1])).toEqual({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            channel: 99,
+                        },
+                        type: 'MessagePort',
+                    },
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -311,7 +343,10 @@ describe('StructureClone', () => {
                     deserializeStructure({
                         root: value,
                     })
-                ).toEqual(value);
+                ).toEqual({
+                    data: value,
+                    transferred: [],
+                });
             }
         );
 
@@ -354,7 +389,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(obj1);
+            ).toEqual({
+                data: obj1,
+                transferred: [],
+            });
         });
 
         it('should deserialize arrays with objects', () => {
@@ -362,7 +400,10 @@ describe('StructureClone', () => {
                 deserializeStructure({
                     root: ['abc', 'def', 123, true, { message: 'Hello' }],
                 })
-            ).toEqual(['abc', 'def', 123, true, { message: 'Hello' }]);
+            ).toEqual({
+                data: ['abc', 'def', 123, true, { message: 'Hello' }],
+                transferred: [],
+            });
         });
 
         it('should deserialize circular arrays', () => {
@@ -386,7 +427,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(arr1);
+            ).toEqual({
+                data: arr1,
+                transferred: [],
+            });
         });
 
         it('should map transferrables as special references', () => {
@@ -413,7 +457,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(obj1);
+            ).toEqual({
+                data: obj1,
+                transferred: [],
+            });
         });
 
         it.each(arrayTypes)('should map %s as special references', (type) => {
@@ -441,7 +488,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(obj1);
+            ).toEqual({
+                data: obj1,
+                transferred: [],
+            });
         });
 
         it('should support BigInt objects', () => {
@@ -455,7 +505,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(BigInt(989898434684646));
+            ).toEqual({
+                data: BigInt(989898434684646),
+                transferred: [],
+            });
         });
 
         it('should support Date objects', () => {
@@ -469,7 +522,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(new Date('2020-07-21T00:00:00.000Z'));
+            ).toEqual({
+                data: new Date('2020-07-21T00:00:00.000Z'),
+                transferred: [],
+            });
         });
 
         it('should support RegExp objects', () => {
@@ -486,7 +542,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(new RegExp('^abc$', 'gi'));
+            ).toEqual({
+                data: new RegExp('^abc$', 'gi'),
+                transferred: [],
+            });
         });
 
         it('should support Map objects', () => {
@@ -509,12 +568,13 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(
-                new Map<any, any>([
+            ).toEqual({
+                data: new Map<any, any>([
                     ['key', 'value'],
                     [{ name: 'bob' }, 99],
-                ])
-            );
+                ]),
+                transferred: [],
+            });
         });
 
         it('should support Set objects', () => {
@@ -531,9 +591,10 @@ describe('StructureClone', () => {
                         },
                     },
                 })
-            ).toEqual(
-                new Set<any>(['abc', 'def', 99, { name: 'bob' }])
-            );
+            ).toEqual({
+                data: new Set<any>(['abc', 'def', 99, { name: 'bob' }]),
+                transferred: [],
+            });
         });
 
         it.each(errorCases)(
@@ -554,8 +615,50 @@ describe('StructureClone', () => {
                             },
                         },
                     })
-                ).toEqual(err);
+                ).toEqual({
+                    data: err,
+                    transferred: [],
+                });
             }
         );
+
+        it('should support MessagePort objects', () => {
+            const channel = new MessageChannel(99);
+
+            expect(
+                deserializeStructure({
+                    root: ['$0'],
+                    refs: {
+                        $0: {
+                            root: {
+                                channel: 99,
+                            },
+                            type: 'MessagePort',
+                        },
+                    },
+                })
+            ).toEqual({
+                data: channel.port1,
+                transferred: [channel.port2],
+            });
+        });
+
+        it('should have a different port for the transferred from in the data', () => {
+            const port1 = new MessagePort(99);
+
+            const deserialized = deserializeStructure({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            channel: 99,
+                        },
+                        type: 'MessagePort',
+                    },
+                },
+            });
+
+            expect(deserialized.data).not.toBe(deserialized.transferred[0]);
+        });
     });
 });

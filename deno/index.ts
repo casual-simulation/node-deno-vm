@@ -2,13 +2,17 @@ import { connectWebSocket, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 import {
     serializeStructure,
     deserializeStructure,
-    Transferrable,
+    Structure,
+    StructureWithRefs,
 } from './StructureClone.ts';
-import { MessageEvent } from './MessageTarget.ts';
+import { MessageEvent, Transferrable } from './MessageTarget.ts';
+import { MessagePort, MessageChannel } from './MessageChannel.ts';
 
 const address = Deno.args[0];
 const scriptType = Deno.args[1];
 const script = Deno.args[2];
+
+let ports = new Map<number, MessagePortData>();
 
 init();
 
@@ -55,27 +59,83 @@ async function sendMessage(message: any, socket: WebSocket) {
 }
 
 function patchGlobalThis(send: (json: string) => void) {
-    (<any>globalThis).postMessage = postMessage;
+    (<any>globalThis).postMessage = (data: any, transfer?: Transferrable[]) =>
+        postMessage(null, data, transfer);
+
+    if (typeof (<any>globalThis).MessageChannel === 'undefined') {
+        (<any>globalThis).MessageChannel = MessageChannel;
+    }
+    if (typeof (<any>globalThis).MessagePort === 'undefined') {
+        (<any>globalThis).MessagePort = MessagePort;
+    }
 
     return function onmessage(message: string) {
         if (typeof message === 'string') {
-            const structuredData = JSON.parse(message);
-            const data = deserializeStructure(structuredData);
+            const structuredData = JSON.parse(message) as
+                | Structure
+                | StructureWithRefs;
+            const channel = structuredData.channel;
+            const deserialized = deserializeStructure(structuredData);
+            const data = deserialized.data;
 
-            const event = new MessageEvent('message', {
-                data,
-            });
-
-            if (typeof (<any>globalThis).onmessage === 'function') {
-                (<any>globalThis).onmessage(event);
+            if (deserialized.transferred) {
+                handleTransfers(deserialized.transferred);
             }
-            globalThis.dispatchEvent(event);
+
+            if (typeof channel === 'number') {
+                const portData = ports.get(channel);
+                if (portData) {
+                    portData.recieveData(data);
+                } else {
+                    console.log('No Port!');
+                }
+            } else {
+                const event = new MessageEvent('message', {
+                    data,
+                });
+
+                if (typeof (<any>globalThis).onmessage === 'function') {
+                    (<any>globalThis).onmessage(event);
+                }
+                globalThis.dispatchEvent(event);
+            }
         }
     };
 
-    function postMessage(data: any, transfer?: Transferrable[]): void {
+    function postMessage(
+        channel: number | null,
+        data: any,
+        transfer?: Transferrable[]
+    ): void {
+        if (transfer) {
+            handleTransfers(transfer);
+        }
         const structuredData = serializeStructure(data, transfer);
+        if (typeof channel === 'number') {
+            structuredData.channel = channel;
+        }
         const json = JSON.stringify(structuredData);
         send(json);
     }
+
+    function handleTransfers(transfer?: Transferrable[]) {
+        if (transfer) {
+            for (let t of transfer) {
+                if (t instanceof MessagePort) {
+                    const channel = t.channelID;
+                    ports.set(t.channelID, {
+                        port: t,
+                        recieveData: t.transfer((data, list) => {
+                            postMessage(channel, data, list);
+                        }),
+                    });
+                }
+            }
+        }
+    }
+}
+
+interface MessagePortData {
+    port: MessagePort;
+    recieveData: (data: any) => void;
 }

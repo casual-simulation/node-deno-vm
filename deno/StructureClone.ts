@@ -1,5 +1,6 @@
 import { encode, decode } from 'https://deno.land/std/encoding/base64.ts';
 import { Transferrable } from './MessageTarget.ts';
+import { MessagePort, MessageChannel } from './MessageChannel.ts';
 
 const HAS_CIRCULAR_REF_OR_TRANSFERRABLE = Symbol('hasCircularRef');
 
@@ -45,13 +46,22 @@ export function serializeStructure(
     }
 }
 
-export function deserializeStructure(value: Structure | StructureWithRefs) {
+export function deserializeStructure(
+    value: Structure | StructureWithRefs
+): DeserializedStructure {
     if ('refs' in value) {
         let map = new Map<string, any>();
-        const result = _deserializeRef(value, value.root[0], map);
-        return result;
+        let transferred = [] as Transferrable[];
+        const result = _deserializeRef(value, value.root[0], map, transferred);
+        return {
+            data: result,
+            transferred: transferred,
+        };
     } else {
-        return value.root;
+        return {
+            data: value.root,
+            transferred: [],
+        };
     }
 }
 
@@ -192,6 +202,24 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             obj,
         });
         return [id];
+    } else if (value instanceof MessagePort) {
+        if (!value.transferred) {
+            throw new Error(
+                'Port must be transferred before serialization. Did you forget to add it to the transfer list?'
+            );
+        }
+        let obj = {
+            root: {
+                channel: value.channelID,
+            },
+            type: 'MessagePort',
+        } as const;
+        (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
+        map.set(value, {
+            id,
+            obj,
+        });
+        return [id];
     } else if (value instanceof Object) {
         let root = {} as any;
         let ref = {
@@ -213,7 +241,8 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
 function _deserializeRef(
     structure: StructureWithRefs,
     ref: string,
-    map: Map<string, any>
+    map: Map<string, any>,
+    transfered: Transferrable[]
 ): any {
     if (map.has(ref)) {
         return map.get(ref);
@@ -293,7 +322,12 @@ function _deserializeRef(
             let final = new Map();
             map.set(ref, final);
             for (let value of refData.root) {
-                const [key, val] = _deserializeRef(structure, value[0], map);
+                const [key, val] = _deserializeRef(
+                    structure,
+                    value[0],
+                    map,
+                    transfered
+                );
                 final.set(key, val);
             }
             return final;
@@ -302,7 +336,7 @@ function _deserializeRef(
             map.set(ref, final);
             for (let value of refData.root) {
                 const val = Array.isArray(value)
-                    ? _deserializeRef(structure, value[0], map)
+                    ? _deserializeRef(structure, value[0], map, transfered)
                     : value;
                 final.add(val);
             }
@@ -340,6 +374,11 @@ function _deserializeRef(
                 });
             }
             return final;
+        } else if (refData.type === 'MessagePort') {
+            let final = new MessageChannel(refData.root.channel);
+            map.set(ref, final.port1);
+            transfered.push(final.port2);
+            return final.port1;
         }
     } else if (Array.isArray(refData.root)) {
         let arr = [] as any[];
@@ -347,7 +386,7 @@ function _deserializeRef(
         for (let value of refData.root) {
             arr.push(
                 Array.isArray(value)
-                    ? _deserializeRef(structure, value[0], map)
+                    ? _deserializeRef(structure, value[0], map, transfered)
                     : value
             );
         }
@@ -359,7 +398,7 @@ function _deserializeRef(
             if (refData.root.hasOwnProperty(prop)) {
                 const value = refData.root[prop];
                 obj[prop] = Array.isArray(value)
-                    ? _deserializeRef(structure, value[0], map)
+                    ? _deserializeRef(structure, value[0], map, transfered)
                     : value;
             }
         }
@@ -372,10 +411,27 @@ function _deserializeRef(
 
 export interface Structure {
     root: any;
+    channel?: number;
+}
+
+/**
+ * Defines an interface for a structure that was deserialized.
+ */
+export interface DeserializedStructure {
+    /**
+     * The data in the structure.
+     */
+    data: any;
+
+    /**
+     * The list of values that were transferred and require extra processing to be fully transferred.
+     */
+    transferred: Transferrable[];
 }
 
 export interface StructureWithRefs {
     root: any;
+    channel?: number;
     refs: {
         [key: string]: Ref;
     };
@@ -401,5 +457,6 @@ export interface Ref {
         | 'RegExp'
         | 'Map'
         | 'Set'
-        | 'Error';
+        | 'Error'
+        | 'MessagePort';
 }
