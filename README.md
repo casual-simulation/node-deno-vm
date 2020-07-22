@@ -12,7 +12,7 @@ A VM module for Node.js that utilizes the secure environment provided by Deno.
 -   Web Worker-like API
 -   Supports Windows, MacOS, and Linux.
 -   Tunable permissions (via Deno's permissions).
--   Supports passing ArrayBuffer, TypedArray, Maps, Sets, Dates, RegExp, Errors, and circular objects.
+-   Supports passing ArrayBuffer, TypedArray, Maps, Sets, Dates, RegExp, Errors, MessagePorts, and circular objects.
 
 ## Installation
 
