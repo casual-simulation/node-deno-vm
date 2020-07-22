@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.1
+
+### Date: 7/22/2020
+
+### Changes:
+
+-   Fixed an issue where permissions were being passed incorrectly.
+
 ## v0.6.0
 
 ### Date: 7/22/2020
