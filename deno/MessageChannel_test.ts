@@ -6,46 +6,57 @@ import {
 import { MessageChannel } from './MessageChannel.ts';
 import { MessageEvent } from './MessageTarget.ts';
 
-Deno.test('messages sent on port1 should end up on port2', () => {
-    const channel = new MessageChannel();
+Deno.test(
+    'MessageChannel messages sent on port1 should end up on port2',
+    () => {
+        const channel = new MessageChannel();
 
-    let event: MessageEvent | null = null;
-    channel.port2.onmessage = (e) => {
-        event = e;
-    };
+        let event: MessageEvent | null = null;
+        channel.port2.onmessage = (e) => {
+            event = e;
+        };
 
-    channel.port1.postMessage({
-        hello: 'world',
-    });
-
-    assertEquals(event, {
-        data: {
+        channel.port1.postMessage({
             hello: 'world',
-        },
-    });
-});
+        });
 
-Deno.test('messages sent on port2 should end up on port1', () => {
-    const channel = new MessageChannel();
+        assertEquals(event, {
+            data: {
+                hello: 'world',
+            },
+        });
+    }
+);
 
-    let event: MessageEvent | null = null;
-    channel.port1.onmessage = (e) => {
-        event = e;
-    };
+Deno.test(
+    'MessageChannel messages sent on port2 should end up on port1',
+    () => {
+        const channel = new MessageChannel();
 
-    channel.port2.postMessage({
-        hello: 'world',
-    });
+        let event: MessageEvent | null = null;
+        channel.port1.onmessage = (e) => {
+            event = e;
+        };
 
-    assertEquals(event, {
-        data: {
+        channel.port2.postMessage({
             hello: 'world',
-        },
-    });
+        });
+
+        assertEquals(event, {
+            data: {
+                hello: 'world',
+            },
+        });
+    }
+);
+
+Deno.test('MessageChannel should create ports with a string channel ID', () => {
+    const channel = new MessageChannel();
+    assertEquals(typeof channel.port1.channelID, 'string');
 });
 
 Deno.test(
-    'should be able to transfer() a MessagePort to take control of the serialization',
+    'MessageChannel should be able to transfer() a MessagePort to take control of the serialization',
     () => {
         const channel = new MessageChannel();
 

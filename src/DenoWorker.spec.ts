@@ -241,6 +241,10 @@ describe('DenoWorker', () => {
             expect(ret.type).toEqual('port');
             expect(ret.port).toBeInstanceOf(MessagePort);
 
+            // Ports from the worker should have String IDs
+            // so they don't interfere with the ones generated from the host.
+            expect(typeof ret.port.channelID).toBe('string');
+
             ret.port.onmessage = (e: any) => {
                 resolve(e.data);
             };

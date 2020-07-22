@@ -113,7 +113,7 @@ export class DenoWorker {
     private _available: boolean;
     private _pendingMessages: string[];
     private _options: DenoWorkerOptions;
-    private _ports: Map<number, MessagePortData>;
+    private _ports: Map<number | string, MessagePortData>;
     private _terminated: boolean;
 
     /**
@@ -163,7 +163,10 @@ export class DenoWorker {
                             socket.send(message);
                         }
                     } else {
-                        if (typeof channel === 'number') {
+                        if (
+                            typeof channel === 'number' ||
+                            typeof channel === 'string'
+                        ) {
                             const portData = this._ports.get(channel);
                             if (portData) {
                                 portData.recieveData(data);
@@ -335,7 +338,7 @@ export class DenoWorker {
     }
 
     private _postMessage(
-        channel: number | null,
+        channel: number | string | null,
         data: any,
         transfer?: Transferrable[]
     ) {

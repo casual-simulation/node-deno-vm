@@ -420,7 +420,7 @@ export interface Structure {
      * If omitted, then the root channel sent this message.
      * Used to multiplex messages.
      */
-    channel?: number;
+    channel?: number | string;
 
     /**
      * A map of reference IDs to objects.

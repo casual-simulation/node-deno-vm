@@ -15,8 +15,9 @@ export class MessageChannel {
     port1: MessagePort;
     port2: MessagePort;
 
-    constructor(channel?: number) {
-        const id = typeof channel === 'number' ? channel : channelIDCounter++;
+    constructor(channel?: number | string) {
+        const id =
+            typeof channel !== 'undefined' ? channel : channelIDCounter++;
         this.port1 = new MessagePort(id);
         this.port2 = new MessagePort(id);
         MessagePort.link(this.port1, this.port2);
@@ -40,7 +41,7 @@ export class MessagePort implements MessagePortInterface {
     /**
      * The ID of this message port's channel.
      */
-    private _channelId: number;
+    private _channelId: number | string;
 
     /**
      * The "message" listeners.
@@ -60,7 +61,7 @@ export class MessagePort implements MessagePortInterface {
         return this._transferred;
     }
 
-    constructor(channelID: number) {
+    constructor(channelID: number | string) {
         this._transferred = false;
         this._channelId = channelID;
         this._listeners = [];

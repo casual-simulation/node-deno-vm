@@ -411,7 +411,7 @@ function _deserializeRef(
 
 export interface Structure {
     root: any;
-    channel?: number;
+    channel?: number | string;
 }
 
 /**
@@ -431,7 +431,7 @@ export interface DeserializedStructure {
 
 export interface StructureWithRefs {
     root: any;
-    channel?: number;
+    channel?: number | string;
     refs: {
         [key: string]: Ref;
     };

@@ -40,6 +40,11 @@ describe('MessageChannel', () => {
         });
     });
 
+    it('should create message ports with a number channel ID', () => {
+        const channel = new MessageChannel();
+        expect(typeof channel.port1.channelID).toBe('number');
+    });
+
     it('should be able to transfer() a MessagePort to take control of the serialization', () => {
         const channel = new MessageChannel();
 

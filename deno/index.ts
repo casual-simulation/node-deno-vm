@@ -12,7 +12,7 @@ const address = Deno.args[0];
 const scriptType = Deno.args[1];
 const script = Deno.args[2];
 
-let ports = new Map<number, MessagePortData>();
+let ports = new Map<number | string, MessagePortData>();
 
 init();
 
@@ -82,7 +82,7 @@ function patchGlobalThis(send: (json: string) => void) {
                 handleTransfers(deserialized.transferred);
             }
 
-            if (typeof channel === 'number') {
+            if (typeof channel === 'number' || typeof channel === 'string') {
                 const portData = ports.get(channel);
                 if (portData) {
                     portData.recieveData(data);
@@ -103,7 +103,7 @@ function patchGlobalThis(send: (json: string) => void) {
     };
 
     function postMessage(
-        channel: number | null,
+        channel: number | string | null,
         data: any,
         transfer?: Transferrable[]
     ): void {
@@ -111,7 +111,7 @@ function patchGlobalThis(send: (json: string) => void) {
             handleTransfers(transfer);
         }
         const structuredData = serializeStructure(data, transfer);
-        if (typeof channel === 'number') {
+        if (typeof channel === 'number' || typeof channel === 'string') {
             structuredData.channel = channel;
         }
         const json = JSON.stringify(structuredData);
