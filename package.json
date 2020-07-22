@@ -19,6 +19,10 @@
     },
     "keywords": [
         "vm",
+        "sandbox",
+        "jail",
+        "worker",
+        "web worker",
         "deno"
     ],
     "author": "Kallyn Gowdy <kallyngowdy@gmail.com>",
