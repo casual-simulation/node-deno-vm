@@ -218,44 +218,51 @@ export class DenoWorker {
 
             addOption(runArgs, '--reload', this._options.reload);
 
-            runArgs.push(`--allow-net=${allowAddress}`);
-
             if (this._options.permissions) {
                 addOption(
                     runArgs,
                     '--allow-all',
                     this._options.permissions.allowAll
                 );
-                addOption(
-                    runArgs,
-                    '--allow-net',
-                    this._options.permissions.allowNet
-                );
-                addOption(
-                    runArgs,
-                    '--allow-read',
-                    this._options.permissions.allowRead
-                );
-                addOption(
-                    runArgs,
-                    '--allow-write',
-                    this._options.permissions.allowWrite
-                );
-                addOption(
-                    runArgs,
-                    '--allow-env',
-                    this._options.permissions.allowEnv
-                );
-                addOption(
-                    runArgs,
-                    '--allow-plugin',
-                    this._options.permissions.allowPlugin
-                );
-                addOption(
-                    runArgs,
-                    '--allow-hrtime',
-                    this._options.permissions.allowHrtime
-                );
+                if (!this._options.permissions.allowAll) {
+                    addOption(
+                        runArgs,
+                        '--allow-net',
+                        typeof this._options.permissions.allowNet === 'boolean'
+                            ? this._options.permissions.allowNet
+                            : this._options.permissions.allowNet
+                            ? [
+                                  ...this._options.permissions.allowNet,
+                                  allowAddress,
+                              ]
+                            : [allowAddress]
+                    );
+                    addOption(
+                        runArgs,
+                        '--allow-read',
+                        this._options.permissions.allowRead
+                    );
+                    addOption(
+                        runArgs,
+                        '--allow-write',
+                        this._options.permissions.allowWrite
+                    );
+                    addOption(
+                        runArgs,
+                        '--allow-env',
+                        this._options.permissions.allowEnv
+                    );
+                    addOption(
+                        runArgs,
+                        '--allow-plugin',
+                        this._options.permissions.allowPlugin
+                    );
+                    addOption(
+                        runArgs,
+                        '--allow-hrtime',
+                        this._options.permissions.allowHrtime
+                    );
+                }
             }
 
             this._process = spawn(this._options.denoExecutable, [
@@ -378,9 +385,8 @@ function addOption(list: string[], name: string, option: boolean | string[]) {
     if (option === true) {
         list.push(`${name}`);
     } else if (Array.isArray(option)) {
-        for (let script of option) {
-            list.push(`${name}=${script}`);
-        }
+        let values = option.join(',');
+        list.push(`${name}=${values}`);
     }
 }
 

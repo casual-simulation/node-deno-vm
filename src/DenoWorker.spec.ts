@@ -79,6 +79,36 @@ describe('DenoWorker', () => {
                 message: 'Hello',
             });
         });
+
+        it('should be able to specify additional network addresses to allow', async () => {
+            worker = new DenoWorker(echoScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            await promise;
+
+            expect(ret).toEqual({
+                type: 'echo',
+                message: 'Hello',
+            });
+        });
     });
 
     describe('data types', () => {
