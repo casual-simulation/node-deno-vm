@@ -5,8 +5,7 @@ import { ChildProcess, spawn } from 'child_process';
 import { serializeStructure, deserializeStructure } from './StructureClone';
 import { URL } from 'url';
 import process from 'process';
-
-export type Transferrable = ArrayBuffer;
+import { OnMessageListener, MessageEvent, Transferrable } from './MessageTarget';
 
 const DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH = __dirname.endsWith('src')
     ? resolve(__dirname, '../deno/index.ts')
@@ -311,14 +310,6 @@ export class DenoWorker {
             }
         }
     }
-}
-
-export interface OnMessageListener {
-    (event: MessageEvent): void;
-}
-
-export interface MessageEvent {
-    data: any;
 }
 
 function addOption(list: string[], name: string, option: boolean | string[]) {

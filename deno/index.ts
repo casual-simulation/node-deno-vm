@@ -4,6 +4,7 @@ import {
     deserializeStructure,
     Transferrable,
 } from './StructureClone.ts';
+import { MessageEvent } from './MessageTarget.ts';
 
 const address = Deno.args[0];
 const scriptType = Deno.args[1];
@@ -76,14 +77,5 @@ function patchGlobalThis(send: (json: string) => void) {
         const structuredData = serializeStructure(data, transfer);
         const json = JSON.stringify(structuredData);
         send(json);
-    }
-}
-
-class MessageEvent extends Event {
-    data: any;
-
-    constructor(type: string, dict: EventInit & { data: any }) {
-        super(type, dict);
-        this.data = dict.data;
     }
 }

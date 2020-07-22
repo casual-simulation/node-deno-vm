@@ -1,16 +1,7 @@
 import { fromByteArray, toByteArray } from 'base64-js';
-import { table } from 'console';
+import { Transferrable } from './MessageTarget';
 
 const HAS_CIRCULAR_REF_OR_TRANSFERRABLE = Symbol('hasCircularRef');
-
-export type Transferrable =
-    | ArrayBuffer
-    | Uint8Array
-    | Uint16Array
-    | Uint32Array
-    | Int8Array
-    | Int16Array
-    | Int32Array;
 
 /**
  * Serializes the given value into a new object that is flat and contains no circular references.
