@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.6.2
+
+### Date: 7/23/2020
+
+### Changes:
+
+-   Exported MessageChannel and MessagePort.
+-   Added `polyfillMessageChannel()` to polyfill the MessageChannel and MessagePort objects on the global object.
+
 ## v0.6.1
 
 ### Date: 7/22/2020

@@ -1,6 +1,6 @@
 {
     "name": "deno-vm",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "description": "A VM module that provides a secure runtime environment via Deno.",
     "main": "./dist/cjs/index.js",
     "types": "./dist/typings/index.d.ts",
