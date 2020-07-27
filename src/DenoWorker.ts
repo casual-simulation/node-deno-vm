@@ -300,11 +300,13 @@ export class DenoWorker {
             this._stderr = <Readable>this._process.stderr;
 
             if (this._options.logStdout) {
+                this.stdout.setEncoding('utf-8');
                 this.stdout.on('data', (data) => {
                     console.log('[deno]', data);
                 });
             }
             if (this._options.logStderr) {
+                this.stderr.setEncoding('utf-8');
                 this.stderr.on('data', (data) => {
                     console.log('[deno]', data);
                 });
