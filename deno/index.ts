@@ -1,3 +1,4 @@
+import './WebSocketPolyfill.ts';
 import { connectWebSocket, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 import {
     serializeStructure,
