@@ -54,6 +54,9 @@ async function init() {
 }
 
 async function sendMessage(message: any, socket: WebSocket) {
+    if (socket.isClosed) {
+        return;
+    }
     const structured = serializeStructure(message);
     const json = JSON.stringify(structured);
     return socket.send(json);
