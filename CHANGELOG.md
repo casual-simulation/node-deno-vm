@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.7.0-alpha.0
+
+### Date: 7/27/2020
+
+### Changes:
+
+-   Added a global WebSocket polyfill since Deno doesn't implement the [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket).
+
 ## v0.6.2
 
 ### Date: 7/23/2020

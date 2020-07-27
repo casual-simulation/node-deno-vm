@@ -4,11 +4,11 @@
 
 Only the latest major version will be supported with security updates.
 
-Currently, this is `v0.6.x`.
+Currently, this is `v0.7.x`.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| v0.6.x  | :white_check_mark: |
+| v0.7.x  | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
