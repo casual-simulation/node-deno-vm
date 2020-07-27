@@ -128,8 +128,8 @@ export class DenoWorker {
     private _options: DenoWorkerOptions;
     private _ports: Map<number | string, MessagePortData>;
     private _terminated: boolean;
-    private _stdout: Duplex;
-    private _stderr: Duplex;
+    private _stdout: Readable;
+    private _stderr: Readable;
 
     /**
      * Creates a new DenoWorker instance and injects the given script.
@@ -139,9 +139,9 @@ export class DenoWorker {
         this._onmessageListeners = [];
         this._pendingMessages = [];
         this._available = false;
-        this._stdout = new Duplex();
+        this._stdout = new Readable();
         this._stdout.setEncoding('utf-8');
-        this._stderr = new Duplex();
+        this._stderr = new Readable();
         this._stdout.setEncoding('utf-8');
         this._stderr.setEncoding('utf-8');
         this._options = Object.assign(
@@ -155,17 +155,6 @@ export class DenoWorker {
             },
             options || {}
         );
-
-        if (this._options.logStdout) {
-            this.stdout.on('data', (data) => {
-                console.log('[deno]', data);
-            });
-        }
-        if (this._options.logStderr) {
-            this.stderr.on('data', (data) => {
-                console.log('[deno]', data);
-            });
-        }
 
         this._ports = new Map();
         this._httpServer = createServer();
@@ -307,8 +296,19 @@ export class DenoWorker {
                 ...scriptArgs,
             ]);
 
-            this._process.stdout?.pipe(this._stdout);
-            this._process.stderr?.pipe(this._stderr);
+            this._stdout = <Readable>this._process.stdout;
+            this._stderr = <Readable>this._process.stderr;
+
+            if (this._options.logStdout) {
+                this.stdout.on('data', (data) => {
+                    console.log('[deno]', data);
+                });
+            }
+            if (this._options.logStderr) {
+                this.stderr.on('data', (data) => {
+                    console.log('[deno]', data);
+                });
+            }
         });
     }
 
