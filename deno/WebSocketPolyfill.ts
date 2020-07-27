@@ -64,6 +64,8 @@ class WebSocketImpl extends EventTarget {
         return 'arraybuffer';
     }
 
+    set binaryType(value: any) {}
+
     get bufferedAmount() {
         return 0;
     }
