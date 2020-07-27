@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.7.0-alpha.1
+
+### Date: 7/27/2020
+
+### Changes:
+
+-   Fixed the WebSocket implementation to allow setting `binaryType`.
+
 ## v0.7.0-alpha.0
 
 ### Date: 7/27/2020
