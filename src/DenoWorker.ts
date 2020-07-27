@@ -15,6 +15,7 @@ import {
     Transferrable,
 } from './MessageTarget';
 import { MessagePort } from './MessageChannel';
+import { Stream, Readable, Duplex } from 'stream';
 
 const DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH = __dirname.endsWith('src')
     ? resolve(__dirname, '../deno/index.ts')
@@ -40,6 +41,18 @@ export interface DenoWorkerOptions {
      * Defaults to false when NODE_ENV is set to "production" and true otherwise.
      */
     reload: boolean | string[];
+
+    /**
+     * Whether to log stdout from the worker.
+     * Defaults to true.
+     */
+    logStdout: boolean;
+
+    /**
+     * Whether to log stderr from the worker.
+     * Defaults to true.
+     */
+    logStderr: boolean;
 
     /**
      * The permissions that the Deno worker should use.
@@ -115,6 +128,8 @@ export class DenoWorker {
     private _options: DenoWorkerOptions;
     private _ports: Map<number | string, MessagePortData>;
     private _terminated: boolean;
+    private _stdout: Duplex;
+    private _stderr: Duplex;
 
     /**
      * Creates a new DenoWorker instance and injects the given script.
@@ -124,15 +139,34 @@ export class DenoWorker {
         this._onmessageListeners = [];
         this._pendingMessages = [];
         this._available = false;
+        this._stdout = new Duplex();
+        this._stdout.setEncoding('utf-8');
+        this._stderr = new Duplex();
+        this._stdout.setEncoding('utf-8');
+        this._stderr.setEncoding('utf-8');
         this._options = Object.assign(
             {
                 denoExecutable: 'deno',
                 denoBootstrapScriptPath: DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH,
                 reload: process.env.NODE_ENV !== 'production',
+                logStdout: true,
+                logStderr: true,
                 permissions: {},
             },
             options || {}
         );
+
+        if (this._options.logStdout) {
+            this.stdout.on('data', (data) => {
+                console.log('[deno]', data);
+            });
+        }
+        if (this._options.logStderr) {
+            this.stderr.on('data', (data) => {
+                console.log('[deno]', data);
+            });
+        }
+
         this._ports = new Map();
         this._httpServer = createServer();
         this._server = new WSServer({
@@ -273,15 +307,17 @@ export class DenoWorker {
                 ...scriptArgs,
             ]);
 
-            this._process.stdout.setEncoding('utf8');
-            this._process.stderr.setEncoding('utf8');
-            this._process.stdout.on('data', (data) => {
-                console.log('[deno]', data);
-            });
-            this._process.stderr.on('data', (data) => {
-                console.log('[deno]', data);
-            });
+            this._process.stdout?.pipe(this._stdout);
+            this._process.stderr?.pipe(this._stderr);
         });
+    }
+
+    get stdout() {
+        return this._stdout;
+    }
+
+    get stderr() {
+        return this._stderr;
     }
 
     /**
