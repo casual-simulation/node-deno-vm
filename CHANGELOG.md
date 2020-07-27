@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.7.1
+
+### Date: 7/27/2020
+
+### Changes:
+
+-   Fixed to log stdout and stderr in UTF-8.
+
 ## v0.7.0
 
 ### Date: 7/27/2020
