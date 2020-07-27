@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.7.0
+
+### Date: 7/27/2020
+
+### Changes:
+
+-   Added the ability to get the stdout and stderr streams from the worker and choose whether to automatically log them to the console.
+-   Added a global WebSocket polyfill since Deno doesn't implement the [WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket).
+
 ## v0.7.0-alpha.1
 
 ### Date: 7/27/2020
