@@ -113,32 +113,20 @@ class WebSocketImpl extends EventTarget {
 
     private _sendOnClose(event: CloseEvent) {
         this._readyState = ReadyState.CLOSED;
-        if (this.onclose) {
-            this.onclose(event);
-        }
         this.dispatchEvent(event);
     }
 
     private _sendOnMessage(event: MessageEvent) {
-        if (this.onmessage) {
-            this.onmessage(event);
-        }
         this.dispatchEvent(event);
     }
 
     private _sendOnError(event: ErrorEvent) {
         this._readyState = ReadyState.CLOSED;
-        if (this.onerror) {
-            this.onerror(event);
-        }
         this.dispatchEvent(event);
     }
 
     private _sendOnOpen(event: Event) {
         this._readyState = ReadyState.OPEN;
-        if (this.onopen) {
-            this.onopen(event);
-        }
         this.dispatchEvent(event);
     }
 }
