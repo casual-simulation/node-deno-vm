@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.7.3
+
+### Date: 8/28/2020
+
+### Changes:
+
+-   Fixed to use the global `Object.hasOwnProperty()` function instead of relying on objects to have it themselves.
+
 ## v0.7.1
 
 ### Date: 7/27/2020
