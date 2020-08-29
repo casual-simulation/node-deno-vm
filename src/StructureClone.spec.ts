@@ -333,6 +333,19 @@ describe('StructureClone', () => {
                 },
             });
         });
+
+        it('should not error when given an object without hasOwnProperty', () => {
+            let obj = {
+                myProp: 'abc',
+                hasOwnProperty: null as any,
+            };
+            expect(serializeStructure(obj)).toEqual({
+                root: {
+                    hasOwnProperty: null,
+                    myProp: 'abc',
+                },
+            });
+        });
     });
 
     describe('deserializeStructure', () => {
@@ -659,6 +672,28 @@ describe('StructureClone', () => {
             });
 
             expect(deserialized.data).not.toBe(deserialized.transferred[0]);
+        });
+
+        it('should not error when given an object without hasOwnProperty', () => {
+            const deserialized = deserializeStructure({
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            hasOwnProperty: null,
+                            myProp: 'abc',
+                        },
+                    },
+                },
+            });
+
+            expect(deserialized).toEqual({
+                data: {
+                    hasOwnProperty: null,
+                    myProp: 'abc',
+                },
+                transferred: [],
+            });
         });
     });
 });

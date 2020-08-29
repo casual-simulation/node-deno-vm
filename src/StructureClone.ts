@@ -228,7 +228,7 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
             obj: ref,
         });
         for (let prop in value) {
-            if (value.hasOwnProperty(prop)) {
+            if (Object.hasOwnProperty.call(value, prop)) {
                 root[prop] = _serializeObject((<any>value)[prop], map);
             }
         }
@@ -390,7 +390,7 @@ function _deserializeRef(
         let obj = {} as any;
         map.set(ref, obj);
         for (let prop in refData.root) {
-            if (refData.root.hasOwnProperty(prop)) {
+            if (Object.hasOwnProperty.call(refData.root, prop)) {
                 const value = refData.root[prop];
                 obj[prop] = Array.isArray(value)
                     ? _deserializeRef(structure, value[0], map, transfered)

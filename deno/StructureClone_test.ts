@@ -343,6 +343,22 @@ Deno.test('serializeStructure() should support MessagePort objects', () => {
 });
 
 Deno.test(
+    'serializeStructure() should not error when given an object without hasOwnProperty',
+    () => {
+        let obj = {
+            myProp: 'abc',
+            hasOwnProperty: null,
+        };
+        assertEquals(serializeStructure(obj), {
+            root: {
+                hasOwnProperty: null,
+                myProp: 'abc',
+            },
+        });
+    }
+);
+
+Deno.test(
     'deserializeStructure() should return the root value for primitives',
     () => {
         for (let [value] of primitives) {
@@ -713,5 +729,29 @@ Deno.test(
         });
 
         assert(deserialized.data !== deserialized.transferred[0]);
+    }
+);
+
+Deno.test(
+    'deserializeStructure() should not error when given an object without hasOwnProperty',
+    () => {
+        const deserialized = deserializeStructure({
+            root: ['$0'],
+            refs: {
+                $0: {
+                    root: {
+                        hasOwnProperty: null,
+                        myProp: 'abc',
+                    },
+                },
+            },
+        });
+        assertEquals(deserialized, {
+            data: {
+                hasOwnProperty: null,
+                myProp: 'abc',
+            },
+            transferred: [],
+        });
     }
 );
