@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>MessagePortData | deno-vm</title>
+	<title>ExecResult | deno-vm</title>
 	<meta name="description" content="Documentation for deno-vm">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_src_denoworker_.html">&quot;src/DenoWorker&quot;</a>
+					<a href="../modules/_src_utils_.html">&quot;src/Utils&quot;</a>
 				</li>
 				<li>
-					<a href="_src_denoworker_.messageportdata.html">MessagePortData</a>
+					<a href="_src_utils_.execresult.html">ExecResult</a>
 				</li>
 			</ul>
-			<h1>Interface MessagePortData</h1>
+			<h1>Interface ExecResult</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">MessagePortData</span>
+						<span class="target">ExecResult</span>
 					</li>
 				</ul>
 			</section>
@@ -81,58 +81,37 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_src_denoworker_.messageportdata.html#port" class="tsd-kind-icon">port</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_src_denoworker_.messageportdata.html#recievedata" class="tsd-kind-icon">recieve<wbr>Data</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_utils_.execresult.html#stdin" class="tsd-kind-icon">stdin</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_utils_.execresult.html#stdout" class="tsd-kind-icon">stdout</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="port" class="tsd-anchor"></a>
-					<h3>port</h3>
-					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <a href="../classes/_src_messagechannel_.messageport.html" class="tsd-signature-type">MessagePort</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="stdin" class="tsd-anchor"></a>
+					<h3>stdin</h3>
+					<div class="tsd-signature tsd-kind-icon">stdin<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/DenoWorker.ts#L438">src/DenoWorker.ts:438</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/Utils.ts#L38">src/Utils.ts:38</a></li>
 						</ul>
 					</aside>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="recievedata" class="tsd-anchor"></a>
-					<h3>recieve<wbr>Data</h3>
-					<div class="tsd-signature tsd-kind-icon">recieve<wbr>Data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="stdout" class="tsd-anchor"></a>
+					<h3>stdout</h3>
+					<div class="tsd-signature tsd-kind-icon">stdout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/DenoWorker.ts#L439">src/DenoWorker.ts:439</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/Utils.ts#L37">src/Utils.ts:37</a></li>
 						</ul>
 					</aside>
-					<div class="tsd-type-declaration">
-						<h4>Type declaration</h4>
-						<ul class="tsd-parameters">
-							<li class="tsd-parameter-signature">
-								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-property tsd-is-not-exported">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-								</ul>
-								<ul class="tsd-descriptions">
-									<li class="tsd-description">
-										<h4 class="tsd-parameters-title">Parameters</h4>
-										<ul class="tsd-parameters">
-											<li>
-												<h5>data: <span class="tsd-signature-type">any</span></h5>
-											</li>
-										</ul>
-										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
 				</section>
 			</section>
 		</div>
@@ -142,7 +121,7 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/_src_denoworker_.html">&quot;src/<wbr>Deno<wbr>Worker&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -157,7 +136,7 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/_src_structureclone_.html">&quot;src/<wbr>Structure<wbr>Clone&quot;</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/_src_utils_.html">&quot;src/<wbr>Utils&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -167,32 +146,32 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-module">
-						<a href="../classes/_src_denoworker_.denoworker.html" class="tsd-kind-icon">Deno<wbr>Worker</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_src_denoworker_.denoworkeroptions.html" class="tsd-kind-icon">Deno<wbr>Worker<wbr>Options</a>
-					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_src_denoworker_.messageportdata.html" class="tsd-kind-icon">Message<wbr>Port<wbr>Data</a>
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="_src_utils_.execresult.html" class="tsd-kind-icon">Exec<wbr>Result</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_src_denoworker_.messageportdata.html#port" class="tsd-kind-icon">port</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_src_utils_.execresult.html#stdin" class="tsd-kind-icon">stdin</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_src_denoworker_.messageportdata.html#recievedata" class="tsd-kind-icon">recieve<wbr>Data</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_src_utils_.execresult.html#stdout" class="tsd-kind-icon">stdout</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_src_denoworker_.html#default_deno_bootstrap_script_path" class="tsd-kind-icon">DEFAULT_<wbr>DENO_<wbr>BOOTSTRAP_<wbr>SCRIPT_<wbr>PATH</a>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/_src_utils_.html#forcekill" class="tsd-kind-icon">force<wbr>Kill</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_src_denoworker_.html#addoption" class="tsd-kind-icon">add<wbr>Option</a>
+						<a href="../modules/_src_utils_.html#killunix" class="tsd-kind-icon">kill<wbr>Unix</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="../modules/_src_utils_.html#killwindows" class="tsd-kind-icon">kill<wbr>Windows</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="../modules/_src_utils_.html#polyfillmessagechannel" class="tsd-kind-icon">polyfill<wbr>Message<wbr>Channel</a>
 					</li>
 				</ul>
 			</nav>

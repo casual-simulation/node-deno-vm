@@ -71,8 +71,17 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Interfaces</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/_src_utils_.execresult.html" class="tsd-kind-icon">Exec<wbr>Result</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_src_utils_.html#forcekill" class="tsd-kind-icon">force<wbr>Kill</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_src_utils_.html#killunix" class="tsd-kind-icon">kill<wbr>Unix</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module tsd-is-not-exported"><a href="_src_utils_.html#killwindows" class="tsd-kind-icon">kill<wbr>Windows</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="_src_utils_.html#polyfillmessagechannel" class="tsd-kind-icon">polyfill<wbr>Message<wbr>Channel</a></li>
 							</ul>
 						</section>
@@ -81,6 +90,85 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="forcekill" class="tsd-anchor"></a>
+					<h3>force<wbr>Kill</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">force<wbr>Kill<span class="tsd-signature-symbol">(</span>pid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/Utils.ts#L18">src/Utils.ts:18</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Forcefully kills the process with the given ID.
+										On Linux/Unix, this means sending the process the SIGKILL signal.
+									On Windows, this means using the taskkill executable to kill the process.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>pid: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The ID of the process to kill.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="killunix" class="tsd-anchor"></a>
+					<h3>kill<wbr>Unix</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">kill<wbr>Unix<span class="tsd-signature-symbol">(</span>pid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/Utils.ts#L31">src/Utils.ts:31</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>pid: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+					<a name="killwindows" class="tsd-anchor"></a>
+					<h3>kill<wbr>Windows</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">kill<wbr>Windows<span class="tsd-signature-symbol">(</span>pid<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/Utils.ts#L27">src/Utils.ts:27</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>pid: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="polyfillmessagechannel" class="tsd-anchor"></a>
 					<h3>polyfill<wbr>Message<wbr>Channel</h3>
@@ -91,7 +179,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/f99fb95/src/Utils.ts#L3">src/Utils.ts:3</a></li>
+									<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/58b9267/src/Utils.ts#L4">src/Utils.ts:4</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -108,6 +196,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="_src_denoworker_.html">&quot;src/<wbr>Deno<wbr>Worker&quot;</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="_src_denoworker_spec_.html">&quot;src/<wbr>Deno<wbr>Worker.spec&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="_src_messagechannel_.html">&quot;src/<wbr>Message<wbr>Channel&quot;</a>
@@ -128,6 +219,18 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="../interfaces/_src_utils_.execresult.html" class="tsd-kind-icon">Exec<wbr>Result</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="_src_utils_.html#forcekill" class="tsd-kind-icon">force<wbr>Kill</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_src_utils_.html#killunix" class="tsd-kind-icon">kill<wbr>Unix</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
+						<a href="_src_utils_.html#killwindows" class="tsd-kind-icon">kill<wbr>Windows</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="_src_utils_.html#polyfillmessagechannel" class="tsd-kind-icon">polyfill<wbr>Message<wbr>Channel</a>
 					</li>
