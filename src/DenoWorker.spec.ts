@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 import { URL } from 'url';
 import { MessageChannel, MessagePort } from './MessageChannel';
+import psList from 'ps-list';
 
 console.log = jest.fn();
 jest.setTimeout(10000);
@@ -13,6 +14,8 @@ describe('DenoWorker', () => {
     const echoScript = readFileSync(echoFile, { encoding: 'utf-8' });
     const pingFile = path.resolve(__dirname, './test/ping.js');
     const pingScript = readFileSync(pingFile, { encoding: 'utf-8' });
+    const infiniteFile = path.resolve(__dirname, './test/infinite.js');
+    const infiniteScript = readFileSync(infiniteFile, { encoding: 'utf-8' });
 
     afterEach(() => {
         if (worker) {
@@ -285,4 +288,158 @@ describe('DenoWorker', () => {
             expect(final).toEqual('pong');
         });
     });
+
+    describe('terminate()', () => {
+        it('should kill the deno process when terminated immediately', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            worker = new DenoWorker(echoScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+            worker.terminate();
+
+            denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+        });
+
+        it('should kill the deno process when terminated after the initial connection', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            worker = new DenoWorker(echoScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            await promise;
+
+            worker.terminate();
+
+            denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+        });
+
+        it('should kill the deno process when terminated while sending data', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            worker = new DenoWorker(echoScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            worker.terminate();
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+        });
+
+        it('should kill the deno process when terminated while recieving data', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            worker = new DenoWorker(echoScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                console.log('Message');
+                resolve();
+            };
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            await Promise.resolve();
+
+            worker.terminate();
+
+            denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+        });
+
+        it('should kill the deno process when terminated while the script is in an infinite loop', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            worker = new DenoWorker(infiniteScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            await promise;
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            worker.terminate();
+
+            denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+        });
+    });
 });
+
+async function getDenoProcesses() {
+    const list = await psList();
+    const denoProcesses = list.filter((p) => /^deno/.test(p.name));
+    return denoProcesses;
+}

@@ -16,6 +16,7 @@ import {
 } from './MessageTarget';
 import { MessagePort } from './MessageChannel';
 import { Stream, Readable, Duplex } from 'stream';
+import { forceKill } from './Utils';
 
 const DEFAULT_DENO_BOOTSTRAP_SCRIPT_PATH = __dirname.endsWith('src')
     ? resolve(__dirname, '../deno/index.ts')
@@ -217,6 +218,7 @@ export class DenoWorker {
 
         this._httpServer.listen({ host: '127.0.0.1', port: 0 }, () => {
             if (this._terminated) {
+                this._httpServer.close();
                 return;
             }
             const addr = this._httpServer.address();
@@ -240,6 +242,7 @@ export class DenoWorker {
             let runArgs = [] as string[];
 
             addOption(runArgs, '--reload', this._options.reload);
+            // addOption(runArgs, '--unstable', true);
 
             if (this._options.permissions) {
                 addOption(
@@ -342,12 +345,12 @@ export class DenoWorker {
     terminate() {
         this._terminated = true;
         if (this._process) {
-            this._process.kill();
+            // this._process.kill();
+            forceKill(this._process.pid);
             this._process = null;
         }
         if (this._httpServer) {
             this._httpServer.close();
-            this._httpServer = null;
         }
         if (this._server) {
             this._server.close();
@@ -387,6 +390,9 @@ export class DenoWorker {
         data: any,
         transfer?: Transferrable[]
     ) {
+        if (this._terminated) {
+            return;
+        }
         this._handleTransferrables(transfer);
         const structuredData = serializeStructure(data, transfer);
         if (channel !== null) {
