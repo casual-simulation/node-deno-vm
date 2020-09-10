@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.7.4
+
+### Date: 9/10/2020
+
+### Changes:
+
+-   Fixed to force the Deno subprocess to close when terminating the worker.
+    -   Forcing the process to be killed seems to be the most reasonable in the case that we're treating these like headless browser tabs.
+    -   When we try to gracefully kill the process, Deno might ignore it if it has things like infinite loops or open handles.
+    -   On Linux/Unix, this means sending a `SIGKILL` signal to the Deno subprocess.
+    -   On Windows, this means using `taskkill` with the `/T` and `/F` options.
+
 ## v0.7.3
 
 ### Date: 8/28/2020
