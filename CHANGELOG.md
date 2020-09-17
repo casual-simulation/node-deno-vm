@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.8.0
+
+### Date: 9/17/2020
+
+### Changes:
+
+-   Updated to support Deno 1.4.
+    -   Deno 1.4 changed their WebSocket API and so we no longer need the polyfill.
+
 ## v0.7.4
 
 ### Date: 9/10/2020
