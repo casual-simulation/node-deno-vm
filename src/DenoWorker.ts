@@ -227,7 +227,7 @@ export class DenoWorker {
             if (typeof addr === 'string') {
                 connectAddress = addr;
             } else {
-                connectAddress = `http://${addr.address}:${addr.port}`;
+                connectAddress = `ws://${addr.address}:${addr.port}`;
                 allowAddress = `${addr.address}:${addr.port}`;
             }
 

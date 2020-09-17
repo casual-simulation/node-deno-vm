@@ -1,5 +1,3 @@
-import './WebSocketPolyfill.ts';
-import { connectWebSocket, WebSocket } from 'https://deno.land/std/ws/mod.ts';
 import {
     serializeStructure,
     deserializeStructure,
@@ -18,43 +16,39 @@ let ports = new Map<number | string, MessagePortData>();
 init();
 
 async function init() {
-    const socket = await connectWebSocket(address);
+    const socket = new WebSocket(address);
 
     let onMessage = patchGlobalThis((json) => socket.send(json));
 
-    const messages = async (): Promise<void> => {
-        for await (const message of socket) {
-            if (typeof message === 'string') {
-                onMessage(message);
-            }
-        }
+    socket.onmessage = (message) => {
+        onMessage(message.data);
     };
-
-    messages().catch((err) => {
+    socket.onerror = (err) => {
         console.error(err);
-        if (!socket.isClosed) {
+        if (socket.readyState !== WebSocket.CLOSED) {
             socket.close();
         }
-    });
+    };
+    socket.onopen = () => {
+        sendMessage(
+            {
+                type: 'init',
+            },
+            socket
+        );
 
-    sendMessage(
-        {
-            type: 'init',
-        },
-        socket
-    );
-
-    if (scriptType === 'script') {
-        Function(script)();
-    } else if (scriptType === 'import') {
-        import(script);
-    } else {
-        throw new Error('Unsupported scrypt type: ' + scriptType);
-    }
+        if (scriptType === 'script') {
+            Function(script)();
+        } else if (scriptType === 'import') {
+            import(script);
+        } else {
+            throw new Error('Unsupported scrypt type: ' + scriptType);
+        }
+    };
 }
 
 async function sendMessage(message: any, socket: WebSocket) {
-    if (socket.isClosed) {
+    if (socket.readyState !== WebSocket.OPEN) {
         return;
     }
     const structured = serializeStructure(message);
