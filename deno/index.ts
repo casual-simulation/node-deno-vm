@@ -5,7 +5,10 @@ import {
     StructureWithRefs,
 } from './StructureClone.ts';
 import { MessageEvent, Transferrable } from './MessageTarget.ts';
-import { MessagePort, MessageChannel } from './MessageChannel.ts';
+import {
+    MessagePort as MessagePortShim,
+    MessageChannel as MessageChannelShim,
+} from './MessageChannel.ts';
 
 const address = Deno.args[0];
 const scriptType = Deno.args[1];
@@ -60,12 +63,16 @@ function patchGlobalThis(send: (json: string) => void) {
     (<any>globalThis).postMessage = (data: any, transfer?: Transferrable[]) =>
         postMessage(null, data, transfer);
 
-    if (typeof (<any>globalThis).MessageChannel === 'undefined') {
-        (<any>globalThis).MessageChannel = MessageChannel;
+    if (typeof (<any>globalThis).MessageChannel !== 'undefined') {
+        (<any>globalThis).BuiltinMessageChannel = (<any>(
+            globalThis
+        )).MessageChannel;
     }
-    if (typeof (<any>globalThis).MessagePort === 'undefined') {
-        (<any>globalThis).MessagePort = MessagePort;
+    if (typeof (<any>globalThis).MessagePort !== 'undefined') {
+        (<any>globalThis).BuiltinMessagePort = (<any>globalThis).MessagePort;
     }
+    (<any>globalThis).MessageChannel = MessageChannelShim;
+    (<any>globalThis).MessagePort = MessagePortShim;
 
     return function onmessage(message: string) {
         if (typeof message === 'string') {
@@ -119,7 +126,7 @@ function patchGlobalThis(send: (json: string) => void) {
     function handleTransfers(transfer?: Transferrable[]) {
         if (transfer) {
             for (let t of transfer) {
-                if (t instanceof MessagePort) {
+                if (t instanceof MessagePortShim) {
                     const channel = t.channelID;
                     ports.set(t.channelID, {
                         port: t,
