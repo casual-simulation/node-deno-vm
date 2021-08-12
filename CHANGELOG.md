@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.1
+
+### Date: 8/12/2021
+
+### Changes:
+
+-   Updated to support Deno 1.12.
+    -   Deno 1.12 added the `MessageChannel` and `MessagePort` APIs which caused `MessagePort` instances to be untransferrable.
+-   Added the `denoUnstable` option to `DenoWorker` to enable unstable Deno features.
+
 ## v0.8.0
 
 ### Date: 9/17/2020
