@@ -56,6 +56,11 @@ export interface DenoWorkerOptions {
     logStderr: boolean;
 
     /**
+     * Whether to use Deno's unstable features
+     */
+    denoUnstable: boolean;
+
+    /**
      * The permissions that the Deno worker should use.
      */
     permissions: {
@@ -152,6 +157,7 @@ export class DenoWorker {
                 reload: process.env.NODE_ENV !== 'production',
                 logStdout: true,
                 logStderr: true,
+                denoUnstable: false,
                 permissions: {},
             },
             options || {}
@@ -242,7 +248,7 @@ export class DenoWorker {
             let runArgs = [] as string[];
 
             addOption(runArgs, '--reload', this._options.reload);
-            // addOption(runArgs, '--unstable', true);
+            addOption(runArgs, '--unstable', this._options.denoUnstable);
 
             if (this._options.permissions) {
                 addOption(
