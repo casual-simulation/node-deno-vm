@@ -4,6 +4,7 @@ import path from 'path';
 import { URL } from 'url';
 import { MessageChannel, MessagePort } from './MessageChannel';
 import psList from 'ps-list';
+import child_process, { spawn } from 'child_process';
 
 console.log = jest.fn();
 jest.setTimeout(10000);
@@ -111,6 +112,32 @@ describe('DenoWorker', () => {
                 type: 'echo',
                 message: 'Hello',
             });
+        });
+
+        it('should allow usage of the --unstable flag', async () => {
+            const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+            worker = new DenoWorker(echoScript, { denoUnstable: true });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            await promise;
+
+            const call = spawnSpy.mock.calls[0];
+            expect(call[1]).toContain('--unstable');
         });
     });
 
