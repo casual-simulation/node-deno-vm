@@ -350,11 +350,11 @@ export class DenoWorker {
      */
     terminate() {
         this._terminated = true;
-        if (this._process) {
+        if (this._process && this._process.exitCode === null) {
             // this._process.kill();
             forceKill(this._process.pid);
-            this._process = null;
         }
+        this._process = null;
         if (this._httpServer) {
             this._httpServer.close();
         }
