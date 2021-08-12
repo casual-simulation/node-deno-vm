@@ -114,29 +114,85 @@ describe('DenoWorker', () => {
             });
         });
 
-        it('should allow usage of the --unstable flag', async () => {
-            const spawnSpy = jest.spyOn(child_process, 'spawn');
-
-            worker = new DenoWorker(echoScript, { denoUnstable: true });
-
-            let resolve: any;
-            let promise = new Promise((res, rej) => {
-                resolve = res;
-            });
-            worker.onmessage = (e) => {
-                resolve();
-            };
-
-            worker.postMessage({
-                type: 'echo',
-                message: 'Hello',
+        describe('denoUnstable', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
             });
 
-            await promise;
+            it('should not include the --unstable flag by default', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
 
-            const call = spawnSpy.mock.calls[0];
-            const [_deno, args] = call;
-            expect(args).toContain('--unstable');
+                worker = new DenoWorker(echoScript);
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--unstable');
+            });
+
+            it('should not include the --unstable flag by when denoUnstable is false', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoUnstable: false });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--unstable');
+            });
+
+            it('should allow include the --unstable flag when denoUnstable is true', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoUnstable: true });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain('--unstable');
+            });
         });
     });
 
@@ -466,6 +522,8 @@ describe('DenoWorker', () => {
 
 async function getDenoProcesses() {
     const list = await psList();
-    const denoProcesses = list.filter((p) => /^deno/.test(p.name));
+    const denoProcesses = list.filter(
+        (p) => /^deno/.test(p.name) && p.cmd !== 'deno lsp'
+    );
     return denoProcesses;
 }
