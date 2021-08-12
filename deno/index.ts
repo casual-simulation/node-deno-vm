@@ -141,6 +141,6 @@ function patchGlobalThis(send: (json: string) => void) {
 }
 
 interface MessagePortData {
-    port: MessagePort;
+    port: MessagePortShim;
     recieveData: (data: any) => void;
 }
