@@ -61,6 +61,16 @@ export interface DenoWorkerOptions {
     denoUnstable: boolean;
 
     /**
+     * V8 flags to be set when starting Deno
+     */
+    denoV8Flags: string[];
+
+    /**
+     * Path where deno can find an import map
+     */
+    denoImportMapPath: string;
+
+    /**
      * The permissions that the Deno worker should use.
      */
     permissions: {
@@ -159,6 +169,8 @@ export class DenoWorker {
                 logStderr: true,
                 denoUnstable: false,
                 permissions: {},
+                denoV8Flags: [],
+                denoImportMapPath: '',
             },
             options || {}
         );
@@ -249,6 +261,16 @@ export class DenoWorker {
 
             addOption(runArgs, '--reload', this._options.reload);
             addOption(runArgs, '--unstable', this._options.denoUnstable);
+
+            if (this._options.denoV8Flags.length > 0) {
+                addOption(runArgs, '--v8-flags', this._options.denoV8Flags);
+            }
+
+            if (this._options.denoImportMapPath) {
+                addOption(runArgs, '--import-map', [
+                    this._options.denoImportMapPath,
+                ]);
+            }
 
             if (this._options.permissions) {
                 addOption(

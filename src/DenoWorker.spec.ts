@@ -194,6 +194,204 @@ describe('DenoWorker', () => {
                 expect(args).toContain('--unstable');
             });
         });
+
+        describe('denoImportMapPath', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('should not include --import-map by default', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript);
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--import-map');
+            });
+
+            it('should not set --import-map by when denoImportMapPath is empty', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoImportMapPath: '' });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--import-map');
+            });
+
+            it('should set --import-map when denoImportMapPath is nonempty', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+                const importMapPath = path.resolve(
+                    './src/test/import_map.json'
+                );
+                worker = new DenoWorker(echoScript, {
+                    denoImportMapPath: importMapPath,
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(`--import-map=${importMapPath}`);
+            });
+        });
+
+        describe('denoV8Flags', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('should not include --v8-flags by default', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript);
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--v8-flags');
+            });
+
+            it('should not set --v8-flags by when denoV8Flags is empty', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoV8Flags: [] });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--v8-flags');
+            });
+
+            it('should set --v8-flags denoV8Flags has a single flag set ', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+                worker = new DenoWorker(echoScript, {
+                    denoV8Flags: ['--max-old-space-size=2048'],
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(`--v8-flags=--max-old-space-size=2048`);
+            });
+
+            it('should set --v8-flags when denoV8Flags has multiple flags set', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+                worker = new DenoWorker(echoScript, {
+                    denoV8Flags: [
+                        '--max-old-space-size=2048',
+                        '--max-heap-size=2048',
+                    ],
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(
+                    `--v8-flags=--max-old-space-size=2048,--max-heap-size=2048`
+                );
+            });
+        });
     });
 
     describe('data types', () => {
