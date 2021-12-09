@@ -169,7 +169,7 @@ describe('DenoWorker', () => {
                 expect(args).not.toContain('--unstable');
             });
 
-            it('should allow include the --unstable flag when denoUnstable is true', async () => {
+            it('should include the --unstable flag when denoUnstable is true', async () => {
                 const spawnSpy = jest.spyOn(child_process, 'spawn');
 
                 worker = new DenoWorker(echoScript, { denoUnstable: true });
@@ -192,6 +192,87 @@ describe('DenoWorker', () => {
                 const call = spawnSpy.mock.calls[0];
                 const [_deno, args] = call;
                 expect(args).toContain('--unstable');
+            });
+        });
+
+        describe('denoCachedOnly', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('should not include the --cached-only flag by default', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript);
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--cached-only');
+            });
+
+            it('should not include the --cached-only flag by when denoCachedOnly is false', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoCachedOnly: false });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--cached-only');
+            });
+
+            it('should include the --cached-only flag when denoCachedOnly is true', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoCachedOnly: true });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain('--cached-only');
             });
         });
 

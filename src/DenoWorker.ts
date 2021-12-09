@@ -71,6 +71,11 @@ export interface DenoWorkerOptions {
     denoImportMapPath: string;
 
     /**
+     * Whether to disable fetching uncached dependencies
+     */
+    denoCachedOnly: boolean;
+
+    /**
      * The permissions that the Deno worker should use.
      */
     permissions: {
@@ -171,6 +176,7 @@ export class DenoWorker {
                 permissions: {},
                 denoV8Flags: [],
                 denoImportMapPath: '',
+                denoCachedOnly: false,
             },
             options || {}
         );
@@ -261,6 +267,7 @@ export class DenoWorker {
 
             addOption(runArgs, '--reload', this._options.reload);
             addOption(runArgs, '--unstable', this._options.denoUnstable);
+            addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
 
             if (this._options.denoV8Flags.length > 0) {
                 addOption(runArgs, '--v8-flags', this._options.denoV8Flags);
