@@ -1,5 +1,6 @@
 import { DenoWorker } from './DenoWorker';
-import { readFileSync } from 'fs';
+import { readFileSync, unlinkSync, existsSync, mkdirSync } from 'fs';
+import { randomBytes } from 'crypto';
 import path from 'path';
 import { URL } from 'url';
 import { MessageChannel, MessagePort } from './MessageChannel';
@@ -358,6 +359,122 @@ describe('DenoWorker', () => {
                 const call = spawnSpy.mock.calls[0];
                 const [_deno, args] = call;
                 expect(args).toContain(`--import-map=${importMapPath}`);
+            });
+        });
+
+        describe('denoLockFilePath', async () => {
+            /*
+             * generateLockFile() shells out to deno to create a lock file from index.ts`. This lock file is created
+             * to be a temporary file (stored in the gitignored ./tmp) It returns the fully qualified path to the temp
+             * file as a string. Cleanup is to handled by the test cleanup.
+             */
+            function generateLockFile(): Promise<string> {
+                const tmpDirPath = path.resolve('./tmp');
+                if (!existsSync(tmpDirPath)) {
+                    mkdirSync(tmpDirPath);
+                }
+                const lockFileName = randomBytes(32).toString('hex');
+                const lockFilePath = path.join(tmpDirPath, lockFileName);
+                lockFiles.add(lockFilePath);
+
+                const denoIndexPath = path.resolve('./deno/index.ts');
+                const process = child_process.exec(
+                    `deno cache --lock=${lockFilePath} --lock-write ${denoIndexPath}`
+                );
+                const promise = new Promise<string>((res) => {
+                    process.on('exit', () => res(lockFilePath));
+                });
+                return promise;
+            }
+
+            let lockFiles: Set<string>;
+            beforeEach(() => {
+                lockFiles = new Set<string>();
+            });
+
+            afterEach(() => {
+                lockFiles.forEach((file) => unlinkSync(file));
+                jest.clearAllMocks();
+            });
+
+            it('should not include --lock by default', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript);
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--lock');
+            });
+
+            it('should not set --lock by when denoLockFilePath is empty', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoLockFilePath: '' });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--lock');
+            });
+
+            it('should set --lock when denoLockFilePath is nonempty', async () => {
+                const lockFilePath = await generateLockFile();
+
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, {
+                    denoLockFilePath: lockFilePath,
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+                worker.terminate();
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(`--lock=${lockFilePath}`);
             });
         });
 

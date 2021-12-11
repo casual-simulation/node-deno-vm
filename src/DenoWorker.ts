@@ -71,6 +71,11 @@ export interface DenoWorkerOptions {
     denoImportMapPath: string;
 
     /**
+     * Path where deno can find a lock file
+     */
+    denoLockFilePath: string;
+
+    /**
      * Whether to disable fetching uncached dependencies
      */
     denoCachedOnly: boolean;
@@ -176,6 +181,7 @@ export class DenoWorker {
                 permissions: {},
                 denoV8Flags: [],
                 denoImportMapPath: '',
+                denoLockFilePath: '',
                 denoCachedOnly: false,
             },
             options || {}
@@ -277,6 +283,10 @@ export class DenoWorker {
                 addOption(runArgs, '--import-map', [
                     this._options.denoImportMapPath,
                 ]);
+            }
+
+            if (this._options.denoLockFilePath) {
+                addOption(runArgs, '--lock', [this._options.denoLockFilePath]);
             }
 
             if (this._options.permissions) {
