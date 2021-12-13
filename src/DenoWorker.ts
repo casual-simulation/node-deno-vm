@@ -81,6 +81,11 @@ export interface DenoWorkerOptions {
     denoCachedOnly: boolean;
 
     /**
+     * Whether to disable typechecking when starting Deno
+     */
+    denoNoCheck: boolean;
+
+    /**
      * The permissions that the Deno worker should use.
      */
     permissions: {
@@ -183,6 +188,7 @@ export class DenoWorker {
                 denoImportMapPath: '',
                 denoLockFilePath: '',
                 denoCachedOnly: false,
+                denoNoCheck: false,
             },
             options || {}
         );
@@ -274,6 +280,7 @@ export class DenoWorker {
             addOption(runArgs, '--reload', this._options.reload);
             addOption(runArgs, '--unstable', this._options.denoUnstable);
             addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
+            addOption(runArgs, '--no-check', this._options.denoNoCheck);
 
             if (this._options.denoV8Flags.length > 0) {
                 addOption(runArgs, '--v8-flags', this._options.denoV8Flags);
