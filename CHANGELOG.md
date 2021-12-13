@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.8.2
+
+### Date: 12/13/2021
+
+### Changes:
+
+-   Added the `denoV8Flags`, `denoImportMapPath`, `denoCachedOnly`, and `denoLockFilePath` options to `DenoWorker` for the `--v8-flags`, `--import-map`, `--cached-only`, and `--lock` flags.
+    -   Thanks to [@derekwheel](https://github.com/derekwheel) for contributing this! ([#12](https://github.com/casual-simulation/node-deno-vm/pull/12))
+
 ## v0.8.1
 
 ### Date: 8/12/2021
