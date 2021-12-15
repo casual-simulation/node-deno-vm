@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.8.3
+
+### Date: 12/15/2021
+
+### Changes:
+
+-   Added the `denoNoCheck` option to `DenoWorker` for the `--no-check` flag.
+    -   Thanks to [@derekwheel](https://github.com/derekwheel) for contributing this! ([#13](https://github.com/casual-simulation/node-deno-vm/pull/13))
+
 ## v0.8.2
 
 ### Date: 12/13/2021
