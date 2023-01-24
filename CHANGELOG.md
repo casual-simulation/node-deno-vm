@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.4
+
+### Date: 1/24/2023
+
+### Changes:
+
+-   Added the `exit` event.
+    -   This event is triggered on `DenoWorker` instances when the Deno child process exits.
+    -   Available via the `onexit` property or by using `worker.addEventListener("exit", listener)`.
+
 ## v0.8.3
 
 ### Date: 12/15/2021
