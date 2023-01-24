@@ -121,14 +121,14 @@ describe('DenoWorker', () => {
             worker = new DenoWorker(failScript);
 
             let exitCode: number;
-            let exitStatus: string;
+            let exitSignal: string;
             let resolve: any;
             let promise = new Promise((res, rej) => {
                 resolve = res;
             });
             worker.onexit = (code, status) => {
                 exitCode = code;
-                exitStatus = status;
+                exitSignal = status;
                 resolve();
             };
 
@@ -140,8 +140,15 @@ describe('DenoWorker', () => {
             await promise;
 
             expect(ret).toBeUndefined();
-            expect(exitCode).toBe(1);
-            expect(exitStatus).toBe(null);
+
+            const isWindows = /^win/.test(process.platform);
+            if (isWindows) {
+                expect(exitCode).toBe(1);
+                expect(exitSignal).toBe(null);
+            } else {
+                expect(exitCode).toBe(1);
+                expect(exitSignal).toBe(null);
+            }
         });
 
         describe('denoUnstable', async () => {
@@ -1065,8 +1072,14 @@ describe('DenoWorker', () => {
             denoProcesses = await getDenoProcesses();
             expect(denoProcesses).toEqual([]);
 
-            expect(exitCode).toBe(1);
-            expect(exitSignal).toBe(null);
+            const isWindows = /^win/.test(process.platform);
+            if (isWindows) {
+                expect(exitCode).toBe(1);
+                expect(exitSignal).toBe(null);
+            } else {
+                expect(exitCode).toBe(null);
+                expect(exitSignal).toBe('SIGKILL');
+            }
         });
     });
 });
