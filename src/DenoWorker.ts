@@ -13,6 +13,7 @@ import {
     OnMessageListener,
     MessageEvent,
     Transferrable,
+    OnExitListener,
 } from './MessageTarget';
 import { MessagePort } from './MessageChannel';
 import { Stream, Readable, Duplex } from 'stream';
@@ -154,6 +155,7 @@ export class DenoWorker {
     private _process: ChildProcess;
     private _socket: WebSocket;
     private _onmessageListeners: OnMessageListener[];
+    private _onexitListeners: OnExitListener[];
     private _available: boolean;
     private _pendingMessages: string[];
     private _options: DenoWorkerOptions;
@@ -168,6 +170,7 @@ export class DenoWorker {
      */
     constructor(script: string | URL, options?: Partial<DenoWorkerOptions>) {
         this._onmessageListeners = [];
+        this._onexitListeners = [];
         this._pendingMessages = [];
         this._available = false;
         this._stdout = new Readable();
@@ -350,6 +353,16 @@ export class DenoWorker {
                 connectAddress,
                 ...scriptArgs,
             ]);
+            this._process.on('exit', (code: number, signal: string) => {
+                this.terminate();
+
+                if (this.onexit) {
+                    this.onexit(code, signal);
+                }
+                for (let onexit of this._onexitListeners) {
+                    onexit(code, signal);
+                }
+            });
 
             this._stdout = <Readable>this._process.stdout;
             this._stderr = <Readable>this._process.stderr;
@@ -381,6 +394,11 @@ export class DenoWorker {
      * Represents an event handler for the "message" event, that is a function to be called when a message is recieved from the worker.
      */
     onmessage: (e: MessageEvent) => void = null;
+
+    /**
+     * Represents an event handler for the "exit" event. That is, a function to be called when the Deno worker process is terminated.
+     */
+    onexit: (code: number, signal: string) => void = null;
 
     /**
      * Sends a message to the worker.
@@ -417,9 +435,28 @@ export class DenoWorker {
      * @param type The type of the event. (Always "message")
      * @param listener The listener to add for the event.
      */
-    addEventListener(type: 'message', listener: OnMessageListener): void {
+    addEventListener(type: 'message', listener: OnMessageListener): void;
+
+    /**
+     * Adds the given listener for the "exit" event.
+     * @param type The type of the event. (Always "exit")
+     * @param listener The listener to add for the event.
+     */
+    addEventListener(type: 'exit', listener: OnExitListener): void;
+
+    /**
+     * Adds the given listener for the "message" or "exit" event.
+     * @param type The type of the event. (Always either "message" or "exit")
+     * @param listener The listener to add for the event.
+     */
+    addEventListener(
+        type: 'message' | 'exit',
+        listener: OnMessageListener | OnExitListener
+    ): void {
         if (type === 'message') {
-            this._onmessageListeners.push(listener);
+            this._onmessageListeners.push(listener as OnMessageListener);
+        } else if (type === 'exit') {
+            this._onexitListeners.push(listener as OnExitListener);
         }
     }
 

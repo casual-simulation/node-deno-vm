@@ -45,6 +45,10 @@ export interface OnMessageListener {
     (event: MessageEvent): void;
 }
 
+export interface OnExitListener {
+    (exitCode: number, signal: string): void;
+}
+
 export interface MessageEvent {
     data: any;
 }

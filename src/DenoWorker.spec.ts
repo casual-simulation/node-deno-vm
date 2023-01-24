@@ -18,6 +18,8 @@ describe('DenoWorker', () => {
     const pingScript = readFileSync(pingFile, { encoding: 'utf-8' });
     const infiniteFile = path.resolve(__dirname, './test/infinite.js');
     const infiniteScript = readFileSync(infiniteFile, { encoding: 'utf-8' });
+    const failFile = path.resolve(__dirname, './test/fail.js');
+    const failScript = readFileSync(failFile, { encoding: 'utf-8' });
 
     afterEach(() => {
         if (worker) {
@@ -113,6 +115,33 @@ describe('DenoWorker', () => {
                 type: 'echo',
                 message: 'Hello',
             });
+        });
+
+        it('should call onexit when the script fails', async () => {
+            worker = new DenoWorker(failScript);
+
+            let exitCode: number;
+            let exitStatus: string;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onexit = (code, status) => {
+                exitCode = code;
+                exitStatus = status;
+                resolve();
+            };
+
+            let ret: any;
+            worker.onmessage = (e) => {
+                ret = e.data;
+            };
+
+            await promise;
+
+            expect(ret).toBeUndefined();
+            expect(exitCode).toBe(1);
+            expect(exitStatus).toBe(null);
         });
 
         describe('denoUnstable', async () => {
@@ -993,6 +1022,51 @@ describe('DenoWorker', () => {
 
             denoProcesses = await getDenoProcesses();
             expect(denoProcesses).toEqual([]);
+        });
+
+        it('should call onexit', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            worker = new DenoWorker(echoScript, {
+                permissions: {
+                    allowNet: [`https://google.com`],
+                },
+            });
+            let exitCode: number;
+            let exitSignal: string;
+            worker.onexit = (code, signal) => {
+                exitCode = code;
+                exitSignal = signal;
+            };
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            worker.postMessage({
+                type: 'echo',
+                message: 'Hello',
+            });
+
+            await promise;
+
+            expect(exitCode).toBeUndefined();
+            expect(exitSignal).toBeUndefined();
+
+            worker.terminate();
+
+            denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+
+            expect(exitCode).toBe(1);
+            expect(exitSignal).toBe(null);
         });
     });
 });
