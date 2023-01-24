@@ -57,8 +57,8 @@
         "ps-list": "7.2.0"
     },
     "dependencies": {
-        "ws": "^7.3.1",
-        "base64-js": "1.3.1"
+        "ws": "^7.5.9",
+        "base64-js": "1.5.1"
     },
     "files": [
         "dist/*",
