@@ -9,12 +9,12 @@ import { MessagePort } from './MessageChannel.ts';
 const primitives = [[true], [false], [0], [1], ['string'], [undefined], [null]];
 
 const arrayTypes = [
-    ['Uint8Array'],
-    ['Uint16Array'],
-    ['Uint32Array'],
-    ['Int8Array'],
-    ['Int16Array'],
-    ['Int32Array'],
+    ['Uint8Array'] as const,
+    ['Uint16Array'] as const,
+    ['Uint32Array'] as const,
+    ['Int8Array'] as const,
+    ['Int16Array'] as const,
+    ['Int32Array'] as const,
 ];
 
 const errorCases = [
