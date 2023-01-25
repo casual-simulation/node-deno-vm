@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>MapRef | deno-vm</title>
+	<title>OnExitListener | deno-vm</title>
 	<meta name="description" content="Documentation for deno-vm">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,13 +56,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_src_structureclone_.html">&quot;src/StructureClone&quot;</a>
+					<a href="../modules/_src_messagetarget_.html">&quot;src/MessageTarget&quot;</a>
 				</li>
 				<li>
-					<a href="_src_structureclone_.mapref.html">MapRef</a>
+					<a href="_src_messagetarget_.onexitlistener.html">OnExitListener</a>
 				</li>
 			</ul>
-			<h1>Interface MapRef</h1>
+			<h1>Interface OnExitListener</h1>
 		</div>
 	</div>
 </header>
@@ -73,46 +73,34 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">MapRef</span>
+						<span class="target">OnExitListener</span>
 					</li>
 				</ul>
 			</section>
-			<section class="tsd-panel-group tsd-index-group">
-				<h2>Index</h2>
-				<section class="tsd-panel tsd-index-panel">
-					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_src_structureclone_.mapref.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_src_structureclone_.mapref.html#obj" class="tsd-kind-icon">obj</a></li>
+			<section class="tsd-panel">
+				<h3 class="tsd-before-signature">Callable</h3>
+				<ul class="tsd-signatures tsd-kind-interface tsd-parent-kind-module">
+					<li class="tsd-signature tsd-kind-icon">__call<span class="tsd-signature-symbol">(</span>exitCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, signal<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+				</ul>
+				<ul class="tsd-descriptions">
+					<li class="tsd-description">
+						<aside class="tsd-sources">
+							<ul>
+								<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/16c6036/src/MessageTarget.ts#L48">src/MessageTarget.ts:48</a></li>
 							</ul>
-						</section>
-					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/16c6036/src/StructureClone.ts#L450">src/StructureClone.ts:450</a></li>
+						</aside>
+						<h4 class="tsd-parameters-title">Parameters</h4>
+						<ul class="tsd-parameters">
+							<li>
+								<h5>exitCode: <span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li>
+								<h5>signal: <span class="tsd-signature-type">string</span></h5>
+							</li>
 						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="obj" class="tsd-anchor"></a>
-					<h3>obj</h3>
-					<div class="tsd-signature tsd-kind-icon">obj<span class="tsd-signature-symbol">:</span> <a href="_src_structureclone_.ref.html" class="tsd-signature-type">Ref</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/16c6036/src/StructureClone.ts#L451">src/StructureClone.ts:451</a></li>
-						</ul>
-					</aside>
-				</section>
+						<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+					</li>
+				</ul>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -130,10 +118,10 @@
 					<li class=" tsd-kind-module">
 						<a href="../modules/_src_messagechannel_.html">&quot;src/<wbr>Message<wbr>Channel&quot;</a>
 					</li>
-					<li class=" tsd-kind-module">
+					<li class="current tsd-kind-module">
 						<a href="../modules/_src_messagetarget_.html">&quot;src/<wbr>Message<wbr>Target&quot;</a>
 					</li>
-					<li class="current tsd-kind-module">
+					<li class=" tsd-kind-module">
 						<a href="../modules/_src_structureclone_.html">&quot;src/<wbr>Structure<wbr>Clone&quot;</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -147,43 +135,26 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_src_structureclone_.deserializedstructure.html" class="tsd-kind-icon">Deserialized<wbr>Structure</a>
+						<a href="_src_messagetarget_.messageevent.html" class="tsd-kind-icon">Message<wbr>Event</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_src_messagetarget_.messageportinterface.html" class="tsd-kind-icon">Message<wbr>Port<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module">
+						<a href="_src_messagetarget_.messagetarget.html" class="tsd-kind-icon">Message<wbr>Target</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-not-exported">
-						<a href="_src_structureclone_.mapref.html" class="tsd-kind-icon">Map<wbr>Ref</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_src_structureclone_.mapref.html#id" class="tsd-kind-icon">id</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_src_structureclone_.mapref.html#obj" class="tsd-kind-icon">obj</a>
-							</li>
-						</ul>
+					<li class="current tsd-kind-interface tsd-parent-kind-module">
+						<a href="_src_messagetarget_.onexitlistener.html" class="tsd-kind-icon">On<wbr>Exit<wbr>Listener</a>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_src_structureclone_.ref.html" class="tsd-kind-icon">Ref</a>
+						<a href="_src_messagetarget_.onmessagelistener.html" class="tsd-kind-icon">On<wbr>Message<wbr>Listener</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="_src_structureclone_.structure.html" class="tsd-kind-icon">Structure</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_src_structureclone_.html#has_circular_ref_or_transferrable" class="tsd-kind-icon">HAS_<wbr>CIRCULAR_<wbr>REF_<wbr>OR_<wbr>TRANSFERRABLE</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_src_structureclone_.html#_deserializeref" class="tsd-kind-icon">_deserialize<wbr>Ref</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module tsd-is-not-exported">
-						<a href="../modules/_src_structureclone_.html#_serializeobject" class="tsd-kind-icon">_serialize<wbr>Object</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_src_structureclone_.html#deserializestructure" class="tsd-kind-icon">deserialize<wbr>Structure</a>
-					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="../modules/_src_structureclone_.html#serializestructure" class="tsd-kind-icon">serialize<wbr>Structure</a>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="../modules/_src_messagetarget_.html#transferrable" class="tsd-kind-icon">Transferrable</a>
 					</li>
 				</ul>
 			</nav>
@@ -201,7 +172,6 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
