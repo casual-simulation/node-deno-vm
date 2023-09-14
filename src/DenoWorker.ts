@@ -142,6 +142,9 @@ export interface DenoWorkerOptions {
         allowHrtime?: boolean;
     };
 
+    /**
+     * Options used to spawn the Deno child process
+     */
     spawnOptions: SpawnOptions;
 }
 
