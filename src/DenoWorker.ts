@@ -1,7 +1,7 @@
 import { createServer, Server } from 'http';
 import WebSocket, { Server as WSServer } from 'ws';
 import { resolve } from 'path';
-import { ChildProcess, spawn } from 'child_process';
+import { ChildProcess, spawn, SpawnOptions } from 'child_process';
 import {
     serializeStructure,
     deserializeStructure,
@@ -141,6 +141,8 @@ export interface DenoWorkerOptions {
          */
         allowHrtime?: boolean;
     };
+
+    spawnOptions: SpawnOptions;
 }
 
 /**
@@ -192,6 +194,7 @@ export class DenoWorker {
                 denoLockFilePath: '',
                 denoCachedOnly: false,
                 denoNoCheck: false,
+                spawnOptions: {},
             },
             options || {}
         );
@@ -346,13 +349,17 @@ export class DenoWorker {
                 }
             }
 
-            this._process = spawn(this._options.denoExecutable, [
-                'run',
-                ...runArgs,
-                this._options.denoBootstrapScriptPath,
-                connectAddress,
-                ...scriptArgs,
-            ]);
+            this._process = spawn(
+                this._options.denoExecutable,
+                [
+                    'run',
+                    ...runArgs,
+                    this._options.denoBootstrapScriptPath,
+                    connectAddress,
+                    ...scriptArgs,
+                ],
+                this._options.spawnOptions
+            );
             this._process.on('exit', (code: number, signal: string) => {
                 this.terminate();
 
