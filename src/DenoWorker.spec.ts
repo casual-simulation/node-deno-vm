@@ -20,6 +20,8 @@ describe('DenoWorker', () => {
     const infiniteScript = readFileSync(infiniteFile, { encoding: 'utf-8' });
     const failFile = path.resolve(__dirname, './test/fail.js');
     const failScript = readFileSync(failFile, { encoding: 'utf-8' });
+    const envFile = path.resolve(__dirname, './test/env.js');
+    const envScript = readFileSync(envFile, { encoding: 'utf-8' });
 
     afterEach(() => {
         if (worker) {
@@ -705,6 +707,41 @@ describe('DenoWorker', () => {
                 expect(args).toContain(
                     `--v8-flags=--max-old-space-size=2048,--max-heap-size=2048`
                 );
+            });
+        });
+
+        describe('spawnOptions', async () => {
+            it('should be able to pass spawn options', async () => {
+                worker = new DenoWorker(envScript, {
+                    permissions: {
+                        allowEnv: true,
+                    },
+                    spawnOptions: {
+                        env: {
+                            ...process.env,
+                            HELLO: 'WORLD',
+                        },
+                    },
+                });
+
+                let ret: any;
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    ret = e.data;
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'env',
+                    name: 'HELLO',
+                });
+
+                await promise;
+
+                expect(ret).toEqual('WORLD');
             });
         });
     });
