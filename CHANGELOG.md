@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.9.0
+
+### Date: 9/15/2023
+
+### Changes:
+
+-   Added the `spawnOptions` configuration option.
+    -   Useful for customizing how Node spawns the Deno child process.
+    -   Thanks to [@andreterron](https://github.com/andreterron) for contributing this! ([#31](https://github.com/casual-simulation/node-deno-vm/pull/31))
+
 ## v0.8.4
 
 ### Date: 1/24/2023
