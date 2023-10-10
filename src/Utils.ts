@@ -29,8 +29,18 @@ function killWindows(pid: number) {
 }
 
 function killUnix(pid: number) {
-    const signal = 'SIGKILL';
-    process.kill(pid, signal);
+    try {
+        const signal = 'SIGKILL';
+        process.kill(pid, signal);
+    } catch (e) {
+        // Allow this call to fail with
+        // ESRCH, which meant that the process
+        // to be killed was already dead.
+        // But re-throw on other codes.
+        if (e.code !== 'ESRCH') {
+            throw e;
+        }
+    }
 }
 
 export interface ExecResult {
