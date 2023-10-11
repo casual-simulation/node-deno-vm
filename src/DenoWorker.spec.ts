@@ -22,6 +22,7 @@ describe('DenoWorker', () => {
     const failScript = readFileSync(failFile, { encoding: 'utf-8' });
     const envFile = path.resolve(__dirname, './test/env.js');
     const envScript = readFileSync(envFile, { encoding: 'utf-8' });
+    const memoryCrashFile = path.resolve(__dirname, './test/memory.js');
 
     afterEach(() => {
         if (worker) {
@@ -1117,6 +1118,33 @@ describe('DenoWorker', () => {
                 expect(exitCode).toBe(null);
                 expect(exitSignal).toBe('SIGKILL');
             }
+        });
+
+        it('should gracefully handle Deno out-of-memory', async () => {
+            let denoProcesses = await getDenoProcesses();
+            expect(denoProcesses).toEqual([]);
+            worker = new DenoWorker(memoryCrashFile, {
+                denoV8Flags: ['--max-heap-size=10'],
+                logStdout: true,
+            });
+            worker.postMessage({});
+
+            const exitValues = await new Promise<
+                [number | null, string | null]
+            >((resolve) => {
+                worker.onexit = (...args) => resolve(args);
+            });
+
+            const isWindows = /^win/.test(process.platform);
+
+            if (isWindows) {
+                expect(typeof exitValues[0]).toEqual('number');
+                expect(exitValues[1]).toEqual(null);
+            } else {
+                expect(exitValues).toEqual([null, 'SIGTRAP']);
+            }
+
+            worker.terminate();
         });
     });
 });
