@@ -420,7 +420,7 @@ export class DenoWorker {
     }
 
     /**
-     * Terminiates the worker and cleans up unused resources.
+     * Terminates the worker and cleans up unused resources.
      */
     terminate() {
         this._terminated = true;
