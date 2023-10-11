@@ -121,7 +121,7 @@ export interface DenoWorkerOptions {
          * Whether to allow reading environment variables.
          * Defaults to false.
          */
-        allowEnv?: boolean;
+        allowEnv?: boolean | string[];
 
         /**
          * Whether to allow running Deno plugins.
@@ -133,7 +133,7 @@ export interface DenoWorkerOptions {
          * Whether to allow running subprocesses.
          * Defaults to false.
          */
-        allowRun?: boolean;
+        allowRun?: boolean | string[];
 
         /**
          * Whether to allow high resolution time measurement.
