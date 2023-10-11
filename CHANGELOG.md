@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.1
+
+### Date: 10/11/2023
+
+### Changes:
+
+-   Fixed an issue where `DenoWorker` would throw an error when the child Deno process runs out of memory.
+    -   Thanks to [@tmcw](https://github.com/tmcw) for contributing this! ([#34](https://github.com/casual-simulation/node-deno-vm/pull/34))
+
 ## v0.9.0
 
 ### Date: 9/15/2023
