@@ -23,6 +23,13 @@ describe('DenoWorker', () => {
     const envFile = path.resolve(__dirname, './test/env.js');
     const envScript = readFileSync(envFile, { encoding: 'utf-8' });
     const memoryCrashFile = path.resolve(__dirname, './test/memory.js');
+    const unresolvedPromiseFile = path.resolve(
+        __dirname,
+        './test/unresolved_promise.js'
+    );
+    const unresolvedPromiseScript = readFileSync(unresolvedPromiseFile, {
+        encoding: 'utf-8',
+    });
 
     afterEach(() => {
         if (worker) {
@@ -1145,6 +1152,42 @@ describe('DenoWorker', () => {
             }
 
             worker.terminate();
+        });
+    });
+
+    describe('closeSocket()', () => {
+        it('should allow natural exit if closeSocket is called after message is received', async () => {
+            worker = new DenoWorker(unresolvedPromiseScript);
+
+            let resolveExit: any;
+            let exit = new Promise((resolve) => {
+                resolveExit = resolve;
+            });
+            worker.onexit = () => resolveExit();
+
+            await new Promise<void>(
+                (resolve) =>
+                    (worker.onmessage = (e) => {
+                        worker.closeSocket();
+                        resolve();
+                    })
+            );
+
+            await exit;
+        });
+
+        it('should allow natural exit if closeSocket is called before socket is open', async () => {
+            worker = new DenoWorker(unresolvedPromiseScript);
+
+            let resolveExit: any;
+            let exit = new Promise((resolve) => {
+                resolveExit = resolve;
+            });
+            worker.onexit = () => resolveExit();
+
+            worker.closeSocket();
+
+            await exit;
         });
     });
 });
