@@ -420,6 +420,16 @@ export class DenoWorker {
     }
 
     /**
+     * Closes the websocket, which may allow the process to exit natually.
+     */
+    closeSocket() {
+        if (this._socket) {
+            this._socket.close();
+            this._socket = null;
+        }
+    }
+
+    /**
      * Terminates the worker and cleans up unused resources.
      */
     terminate() {
