@@ -159,6 +159,7 @@ export class DenoWorker {
     private _server: WSServer;
     private _process: ChildProcess;
     private _socket: WebSocket;
+    private _socketClosed: boolean;
     private _onmessageListeners: OnMessageListener[];
     private _onexitListeners: OnExitListener[];
     private _available: boolean;
@@ -178,6 +179,7 @@ export class DenoWorker {
         this._onexitListeners = [];
         this._pendingMessages = [];
         this._available = false;
+        this._socketClosed = false;
         this._stdout = new Readable();
         this._stdout.setEncoding('utf-8');
         this._stderr = new Readable();
@@ -210,6 +212,11 @@ export class DenoWorker {
         this._server.on('connection', (socket) => {
             if (this._socket) {
                 socket.close();
+                return;
+            }
+            if (this._socketClosed) {
+                socket.close();
+                this._socket = null;
                 return;
             }
             this._socket = socket;
@@ -420,10 +427,22 @@ export class DenoWorker {
     }
 
     /**
+     * Closes the websocket, which may allow the process to exit natually.
+     */
+    closeSocket() {
+        this._socketClosed = true;
+        if (this._socket) {
+            this._socket.close();
+            this._socket = null;
+        }
+    }
+
+    /**
      * Terminates the worker and cleans up unused resources.
      */
     terminate() {
         this._terminated = true;
+        this._socketClosed = true;
         if (this._process && this._process.exitCode === null) {
             // this._process.kill();
             forceKill(this._process.pid);
