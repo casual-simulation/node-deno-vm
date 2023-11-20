@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.10.0
+
+### Date: 11/20/2023
+
+### Changes:
+
+-   Added the ability to close the websocket connection to the Deno subprocess with `.closeSocket()`.
+    -   Thanks to [@andreterron](https://github.com/andreterron) for contributing this! ([#39](https://github.com/casual-simulation/node-deno-vm/pull/39))
+
 ## v0.9.1
 
 ### Date: 10/11/2023
