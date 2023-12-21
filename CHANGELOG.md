@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.10.1
+
+### Date: 12/21/2023
+
+### Changes:
+
+-   Update base64 imports to support Deno std 0.210.0.
+    -   Thanks to [@andreterron](https://github.com/andreterron) for contributing this! ([#40](https://github.com/casual-simulation/node-deno-vm/pull/40))
+
 ## v0.10.0
 
 ### Date: 11/20/2023
