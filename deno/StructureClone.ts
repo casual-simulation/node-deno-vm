@@ -1,4 +1,7 @@
-import { encode, decode } from 'https://deno.land/std/encoding/base64.ts';
+import {
+    encodeBase64,
+    decodeBase64,
+} from 'https://deno.land/std/encoding/base64.ts';
 import { Transferrable } from './MessageTarget.ts';
 import { MessagePort, MessageChannel } from './MessageChannel.ts';
 
@@ -85,7 +88,7 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
         value instanceof Int32Array
     ) {
         let ref = {
-            root: encode(
+            root: encodeBase64(
                 new Uint8Array(value.buffer, value.byteOffset, value.byteLength)
             ),
             type: value.constructor.name,
@@ -98,7 +101,7 @@ function _serializeObject(value: unknown, map: Map<any, MapRef>) {
         return [id];
     } else if (value instanceof ArrayBuffer) {
         let ref = {
-            root: encode(new Uint8Array(value)),
+            root: encodeBase64(new Uint8Array(value)),
             type: value.constructor.name,
         } as Ref;
         (<any>map)[HAS_CIRCULAR_REF_OR_TRANSFERRABLE] = true;
@@ -264,7 +267,7 @@ function _deserializeRef(
             'Int32Array',
         ];
         if (types.indexOf(refData.type) >= 0) {
-            const bytes = new Uint8Array(decode(refData.root));
+            const bytes = new Uint8Array(decodeBase64(refData.root));
             const final =
                 refData.type == 'Uint8Array'
                     ? bytes
