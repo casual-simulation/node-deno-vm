@@ -18,6 +18,8 @@ describe('DenoWorker', () => {
     const pingScript = readFileSync(pingFile, { encoding: 'utf-8' });
     const infiniteFile = path.resolve(__dirname, './test/infinite.js');
     const infiniteScript = readFileSync(infiniteFile, { encoding: 'utf-8' });
+    const fetchFile = path.resolve(__dirname, './test/fetch.js');
+    const fetchScript = readFileSync(fetchFile, { encoding: 'utf-8' });
     const failFile = path.resolve(__dirname, './test/fail.js');
     const failScript = readFileSync(failFile, { encoding: 'utf-8' });
     const envFile = path.resolve(__dirname, './test/env.js');
@@ -124,6 +126,38 @@ describe('DenoWorker', () => {
             expect(ret).toEqual({
                 type: 'echo',
                 message: 'Hello',
+            });
+        });
+
+        it('should be able to specify network addresses to block', async () => {
+            const host = `example.com`;
+
+            worker = new DenoWorker(fetchScript, {
+                permissions: {
+                    allowNet: true,
+                    denyNet: [host],
+                },
+            });
+
+            let ret: any;
+            let resolve: any;
+            let promise = new Promise((res, rej) => {
+                resolve = res;
+            });
+            worker.onmessage = (e) => {
+                ret = e.data;
+                resolve();
+            };
+
+            worker.postMessage({
+                type: 'fetch',
+                url: `https://${host}`,
+            });
+
+            await promise;
+
+            expect(ret).toMatchObject({
+                type: 'error',
             });
         });
 
