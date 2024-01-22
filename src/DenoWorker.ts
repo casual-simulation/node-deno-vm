@@ -104,6 +104,14 @@ export interface DenoWorkerOptions {
         allowNet?: boolean | string[];
 
         /**
+         * Disable network access to provided IP addresses or hostnames. Any addresses
+         * specified here will be denied access, even if they are specified in
+         * `allowNet`. Note that deno-vm needs a network connection between the host
+         * and the guest, so it's not possible to fully disable network access.
+         */
+        denyNet?: string[];
+
+        /**
          * Whether to allow reading from the filesystem.
          * If given a list of strings then only the specified file paths are allowed.
          * Defaults to false.
@@ -330,6 +338,16 @@ export class DenoWorker {
                                   allowAddress,
                               ]
                             : [allowAddress]
+                    );
+                    // Ensures the `allowAddress` isn't denied
+                    const deniedAddresses = this._options.permissions.denyNet?.filter(
+                        (address) => address !== allowAddress
+                    );
+                    addOption(
+                        runArgs,
+                        '--deny-net',
+                        // Ensures an empty array isn't used
+                        deniedAddresses?.length ? deniedAddresses : false
                     );
                     addOption(
                         runArgs,
