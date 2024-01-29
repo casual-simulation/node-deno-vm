@@ -9,6 +9,9 @@ jobs:
         name: Publish
         runs-on: ubuntu-latest
         steps:
+            - name: Cancel if not the master branch # workaround has `on` doesn't have this filter
+              run: exit 1
+              if: github.ref != 'refs/heads/master'
             - uses: actions/checkout@v1
             - name: Use Node.js 12.x
               uses: actions/setup-node@v1
