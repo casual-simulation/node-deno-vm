@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.10.2
+
+### Date: 1/29/2024
+
+### Changes:
+
+-   Added the `denyNet` option to DenoWorker.
+    -   This matches the `--deny-net` option in the Deno CLI: https://docs.deno.com/runtime/manual/basics/permissions#permissions-list
+    -   Thanks to [@andreterron](https://github.com/andreterron) for contributing this! ([#41](https://github.com/casual-simulation/node-deno-vm/pull/41))
+
 ## v0.10.1
 
 ### Date: 12/21/2023
