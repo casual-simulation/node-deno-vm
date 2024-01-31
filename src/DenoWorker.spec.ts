@@ -274,6 +274,37 @@ describe('DenoWorker', () => {
                 const [_deno, args] = call;
                 expect(args).toContain('--unstable');
             });
+
+            it('should allow fine-grained unstable with an object parameter', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, {
+                    denoUnstable: {
+                        temporal: true,
+                        broadcastChannel: true,
+                    },
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain('--unstable-temporal');
+                expect(args).toContain('--unstable-broadcast-channel');
+            });
         });
 
         describe('denoCachedOnly', async () => {
