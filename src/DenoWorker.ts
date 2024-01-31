@@ -59,7 +59,80 @@ export interface DenoWorkerOptions {
     /**
      * Whether to use Deno's unstable features
      */
-    denoUnstable: boolean;
+    denoUnstable:
+        | boolean
+        | {
+              /**
+               * Enable unstable bare node builtins feature
+               */
+              bareNodeBuiltins?: boolean;
+
+              /**
+               *  Enable unstable 'bring your own node_modules' feature
+               */
+              byonm?: boolean;
+
+              /**
+               * Enable unstable resolving of specifiers by extension probing,
+               * .js to .ts, and directory probing.
+               */
+              sloppyImports?: boolean;
+
+              /**
+               * Enable unstable `BroadcastChannel` API
+               */
+              broadcastChannel?: boolean;
+
+              /**
+               * Enable unstable Deno.cron API
+               */
+              cron?: boolean;
+
+              /**
+               * Enable unstable FFI APIs
+               */
+              ffi?: boolean;
+
+              /**
+               * Enable unstable file system APIs
+               */
+              fs?: boolean;
+
+              /**
+               * Enable unstable HTTP APIs
+               */
+              http?: boolean;
+
+              /**
+               * Enable unstable Key-Value store APIs
+               */
+              kv?: boolean;
+
+              /**
+               * Enable unstable net APIs
+               */
+              net?: boolean;
+
+              /**
+               * Enable unstable Temporal API
+               */
+              temporal?: boolean;
+
+              /**
+               * Enable unsafe __proto__ support. This is a security risk.
+               */
+              unsafeProto?: boolean;
+
+              /**
+               * Enable unstable `WebGPU` API
+               */
+              webgpu?: boolean;
+
+              /**
+               * Enable unstable Web Worker APIs
+               */
+              workerOptions?: boolean;
+          };
 
     /**
      * V8 flags to be set when starting Deno
@@ -302,7 +375,20 @@ export class DenoWorker {
             let runArgs = [] as string[];
 
             addOption(runArgs, '--reload', this._options.reload);
-            addOption(runArgs, '--unstable', this._options.denoUnstable);
+            if (this._options.denoUnstable === true) {
+                runArgs.push('--unstable');
+            } else if (this._options.denoUnstable) {
+                for (let [key] of Object.entries(
+                    this._options.denoUnstable
+                ).filter(([_key, val]) => val)) {
+                    runArgs.push(
+                        `--unstable-${key.replace(
+                            /[A-Z]/g,
+                            (m) => '-' + m.toLowerCase()
+                        )}`
+                    );
+                }
+            }
             addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
             addOption(runArgs, '--no-check', this._options.denoNoCheck);
 
