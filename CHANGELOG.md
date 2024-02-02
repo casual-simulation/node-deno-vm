@@ -1,5 +1,23 @@
 # Changelog
 
+## v0.10.3
+
+### Date: 2/02/2024
+
+### Changes:
+
+-   Make the minimum Node version 12
+-   It's now possible to specify an object for `denoUnstable`, which can let you enable more fine-grained unstable flags.
+
+```ts
+new DenoWorker(echoScript, {
+    denoUnstable: {
+        temporal: true,
+        broadcastChannel: true,
+    },
+});
+```
+
 ## v0.10.2
 
 ### Date: 1/29/2024
