@@ -596,13 +596,40 @@ export class DenoWorker {
     /**
      * Removes the given listener for the "message" event.
      * @param type The type of the event. (Always "message")
-     * @param listener The listener to add for the event.
+     * @param listener The listener to remove for the event.
      */
-    removeEventListener(type: 'message', listener: OnMessageListener): void {
+    removeEventListener(type: 'message', listener: OnMessageListener): void;
+
+    /**
+     * Removes the given listener for the "exit" event.
+     * @param type The type of the event. (Always "exit")
+     * @param listener The listener to remove for the event.
+     */
+    removeEventListener(type: 'exit', listener: OnExitListener): void;
+
+    /**
+     * Removes the given listener for the "message" or "exit" event.
+     * @param type The type of the event. (Always either "message" or "exit")
+     * @param listener The listener to remove for the event.
+     */
+    removeEventListener(
+        type: 'message' | 'exit',
+        listener: OnMessageListener | OnExitListener
+    ): void {
         if (type === 'message') {
-            const index = this._onmessageListeners.indexOf(listener);
+            const index = this._onmessageListeners.indexOf(
+                listener as OnMessageListener
+            );
             if (index >= 0) {
                 this._onmessageListeners.splice(index, 1);
+            }
+        }
+        if (type === 'exit') {
+            const index = this._onexitListeners.indexOf(
+                listener as OnExitListener
+            );
+            if (index >= 0) {
+                this._onexitListeners.splice(index, 1);
             }
         }
     }
