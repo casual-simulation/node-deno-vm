@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.10.4
+
+### Date: 2/08/2024
+
+### Changes:
+
+-   Updated `removeEventListener` to also remove `exit` events.
+
 ## v0.10.3
 
 ### Date: 2/02/2024
