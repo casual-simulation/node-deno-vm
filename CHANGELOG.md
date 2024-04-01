@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.11.0
+
+### Date: 4/01/2024
+
+### Changes:
+
+-   Added `location` option to DenoWorker to let users customize location.href and scoping for caches
+
 ## v0.10.4
 
 ### Date: 2/08/2024
