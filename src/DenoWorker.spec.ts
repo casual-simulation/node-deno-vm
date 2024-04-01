@@ -307,6 +307,46 @@ describe('DenoWorker', () => {
             });
         });
 
+        describe('location', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('supports the --location flag to specify location.href', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+                const LOCATION = 'https://xxx.com/';
+
+                worker = new DenoWorker(
+                    `self.onmessage = (e) => {
+    if (e.data.type === 'echo') {
+        self.postMessage(location.href);
+    }
+};`,
+                    {
+                        location: LOCATION,
+                    }
+                );
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve(e);
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                });
+
+                expect(await promise).toEqual({ data: LOCATION });
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(`--location=${LOCATION}`);
+            });
+        });
+
         describe('denoCachedOnly', async () => {
             afterEach(() => {
                 jest.clearAllMocks();

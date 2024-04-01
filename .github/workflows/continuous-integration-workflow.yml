@@ -9,7 +9,7 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macOS-latest, windows-latest]
                 node-version: [12.x]
-                deno-version: [1.x]
+                deno-version: [1.40.x]
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v1
