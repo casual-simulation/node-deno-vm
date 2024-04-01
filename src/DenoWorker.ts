@@ -160,6 +160,12 @@ export interface DenoWorkerOptions {
     denoNoCheck: boolean;
 
     /**
+     * Specify the --location flag, which defines location.href.
+     * This must be a valid URL if provided.
+     */
+    location: string;
+
+    /**
      * The permissions that the Deno worker should use.
      */
     permissions: {
@@ -274,6 +280,7 @@ export class DenoWorker {
                 logStdout: true,
                 logStderr: true,
                 denoUnstable: false,
+                location: undefined,
                 permissions: {},
                 denoV8Flags: [],
                 denoImportMapPath: '',
@@ -391,6 +398,9 @@ export class DenoWorker {
             }
             addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
             addOption(runArgs, '--no-check', this._options.denoNoCheck);
+            if (this._options.location) {
+                addOption(runArgs, '--location', [this._options.location]);
+            }
 
             if (this._options.denoV8Flags.length > 0) {
                 addOption(runArgs, '--v8-flags', this._options.denoV8Flags);
