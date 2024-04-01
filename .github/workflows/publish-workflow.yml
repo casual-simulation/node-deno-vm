@@ -18,7 +18,7 @@ jobs:
             - name: Use Deno Version ${{ matrix.deno-version }}
               uses: denolib/setup-deno@master
               with:
-                  deno-version: 1.x
+                  deno-version: 1.40.x
             - name: npm install and test
               run: |
                   npm ci
