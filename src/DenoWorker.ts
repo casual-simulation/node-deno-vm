@@ -160,6 +160,12 @@ export interface DenoWorkerOptions {
     denoNoCheck: boolean;
 
     /**
+     * Allow Deno to make requests to hosts with certificate
+     * errors.
+     */
+    unsafelyIgnoreCertificateErrors: boolean;
+
+    /**
      * Specify the --location flag, which defines location.href.
      * This must be a valid URL if provided.
      */
@@ -287,6 +293,7 @@ export class DenoWorker {
                 denoLockFilePath: '',
                 denoCachedOnly: false,
                 denoNoCheck: false,
+                unsafelyIgnoreCertificateErrors: false,
                 spawnOptions: {},
             },
             options || {}
@@ -398,6 +405,11 @@ export class DenoWorker {
             }
             addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
             addOption(runArgs, '--no-check', this._options.denoNoCheck);
+            addOption(
+                runArgs,
+                '--unsafely-ignore-certificate-errors',
+                this._options.unsafelyIgnoreCertificateErrors
+            );
             if (this._options.location) {
                 addOption(runArgs, '--location', [this._options.location]);
             }
