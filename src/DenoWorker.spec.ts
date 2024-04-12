@@ -307,6 +307,45 @@ describe('DenoWorker', () => {
             });
         });
 
+        describe('unsafelyIgnoreCertificateErrors', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('supports the --unsafely-ignore-certificate-errors flag', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(
+                    `self.onmessage = (e) => {
+    if (e.data.type === 'echo') {
+        self.postMessage('hi');
+    }
+};`,
+                    {
+                        unsafelyIgnoreCertificateErrors: true,
+                    }
+                );
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve(e);
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                });
+
+                expect(await promise).toEqual({ data: 'hi' });
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(`--unsafely-ignore-certificate-errors`);
+            });
+        });
+
         describe('location', async () => {
             afterEach(() => {
                 jest.clearAllMocks();

@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.12.0
+
+### Date: 4/12/2024
+
+### Changes:
+
+-   Added `unsafelyIgnoreCertificateErrors` option to DenoWorker to let users skip
+    SSL verification.
+
 ## v0.11.0
 
 ### Date: 4/01/2024
