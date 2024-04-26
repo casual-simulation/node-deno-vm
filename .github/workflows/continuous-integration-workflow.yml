@@ -7,7 +7,7 @@ jobs:
         name: Test
         strategy:
             matrix:
-                os: [ubuntu-latest, macOS-latest, windows-latest]
+                os: [ubuntu-latest, macos-12, windows-latest]
                 node-version: [12.x]
                 deno-version: [1.40.x]
         runs-on: ${{ matrix.os }}
