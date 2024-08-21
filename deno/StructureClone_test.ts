@@ -4,7 +4,11 @@ import {
     assertThrows,
 } from 'https://deno.land/std/testing/asserts.ts';
 import { serializeStructure, deserializeStructure } from './StructureClone.ts';
-import { MessagePort } from './MessageChannel.ts';
+import {
+    MessagePort,
+    MessageChannel,
+    resetChannelIDCounter,
+} from './MessageChannel.ts';
 
 const primitives = [[true], [false], [0], [1], ['string'], [undefined], [null]];
 
@@ -323,6 +327,30 @@ Deno.test(
     }
 );
 
+Deno.test(
+    'serializeStructure() should require deeply nested MessagePort objects to be transferred',
+    () => {
+        const port = new MessagePort(99);
+
+        assertThrows(
+            () => {
+                serializeStructure(
+                    {
+                        value: {
+                            value2: {
+                                port,
+                            },
+                        },
+                    },
+                    [port]
+                );
+            },
+            Error,
+            'Port must be transferred before serialization. Did you forget to add it to the transfer list?'
+        );
+    }
+);
+
 Deno.test('serializeStructure() should support MessagePort objects', () => {
     const port1 = new MessagePort(99);
     const port2 = new MessagePort(99);
@@ -341,6 +369,109 @@ Deno.test('serializeStructure() should support MessagePort objects', () => {
         },
     });
 });
+
+Deno.test(
+    'serializeStructure() should support deeply nested MessagePort objects',
+    () => {
+        const port1 = new MessagePort(99);
+        const port2 = new MessagePort(99);
+        MessagePort.link(port1, port2);
+        port1.transfer(() => {});
+
+        assertEquals(
+            serializeStructure(
+                {
+                    a: {
+                        b: {
+                            port1,
+                        },
+                    },
+                },
+                [port1]
+            ),
+            {
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            a: ['$1'],
+                        },
+                    },
+                    $1: {
+                        root: {
+                            b: ['$2'],
+                        },
+                    },
+                    $2: {
+                        root: {
+                            port1: ['$3'],
+                        },
+                    },
+                    $3: {
+                        root: {
+                            channel: 99,
+                        },
+                        type: 'MessagePort',
+                    },
+                },
+            }
+        );
+    }
+);
+
+Deno.test(
+    'serializeStructure() should support MessagePort objects in arrays',
+    () => {
+        resetChannelIDCounter();
+        const channel1 = new MessageChannel();
+        const channel2 = new MessageChannel();
+        const channel3 = new MessageChannel();
+
+        channel1.port1.transfer(() => {});
+        channel2.port1.transfer(() => {});
+        channel3.port1.transfer(() => {});
+
+        assertEquals(
+            serializeStructure(
+                {
+                    arr: [channel1.port1, channel2.port1, channel3.port1],
+                },
+                [channel1.port1, channel2.port1, channel3.port1]
+            ),
+            {
+                root: ['$0'],
+                refs: {
+                    $0: {
+                        root: {
+                            arr: ['$1'],
+                        },
+                    },
+                    $1: {
+                        root: [['$2'], ['$3'], ['$4']],
+                    },
+                    $2: {
+                        root: {
+                            channel: '0',
+                        },
+                        type: 'MessagePort',
+                    },
+                    $3: {
+                        root: {
+                            channel: '1',
+                        },
+                        type: 'MessagePort',
+                    },
+                    $4: {
+                        root: {
+                            channel: '2',
+                        },
+                        type: 'MessagePort',
+                    },
+                },
+            }
+        );
+    }
+);
 
 Deno.test(
     'serializeStructure() should not error when given an object without hasOwnProperty',

@@ -8,6 +8,10 @@ import {
 // Global Channel ID counter.
 let channelIDCounter = 0;
 
+export function resetChannelIDCounter() {
+    channelIDCounter = 0;
+}
+
 /**
  * Defines a class that implements the Channel Messaging API for the worker.
  */
