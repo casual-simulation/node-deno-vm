@@ -262,6 +262,7 @@ export class DenoWorker {
     private _terminated: boolean;
     private _stdout: Readable;
     private _stderr: Readable;
+    private _failureError?: string;
 
     /**
      * Creates a new DenoWorker instance and injects the given script.
@@ -364,6 +365,7 @@ export class DenoWorker {
         });
 
         this._httpServer.listen({ host: '127.0.0.1', port: 0 }, () => {
+          try {
             if (this._terminated) {
                 this._httpServer.close();
                 return;
@@ -522,6 +524,12 @@ export class DenoWorker {
                     console.log('[deno]', data);
                 });
             }
+          } catch(e) {
+              this._failureError = `Failed to start Deno worker server: ${e.message}`;
+              // Informing client about the server failure
+              this.onexit?.(e.errno ?? -1, this._failureError);
+              throw e;
+          }
         });
     }
 
@@ -661,6 +669,10 @@ export class DenoWorker {
         data: any,
         transfer?: Transferrable[]
     ) {
+        // Prevent collecting messages if the server is down
+        if(this._failureError) {
+            throw new Error(this._failureError);
+        }
         if (this._terminated) {
             return;
         }
