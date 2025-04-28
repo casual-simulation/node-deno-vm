@@ -6,9 +6,9 @@
 
 ### Changes:
 
--   Added `denoNoConfig` and `denoNoNPM` options to DenoWorker.
-    -   They default to `true` to prevent Deno from trying to load or interact with other files/configurations.
-    -   Also at least one of them needs to be set to `true` for DenoWorker to be able to load the bootstrap script from `node_modules` (see [#54 for more info](https://github.com/casual-simulation/node-deno-vm/issues/54)).
+-   Added `denoConfig`, `denoNoNPM`, and `denoExtraFlags` options to DenoWorker.
+    -   `denoNoNPM` defaults to `true` to prevent Deno from trying to load or interact with other files/configurations.
+    -   `denoNoNPM` needs to be set to `true` (or `denoConfig` not be specified) for DenoWorker to be able to load the bootstrap script from `node_modules` (see [#54 for more info](https://github.com/casual-simulation/node-deno-vm/issues/54)).
 
 ## v0.12.0
 
