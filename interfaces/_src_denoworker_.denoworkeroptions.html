@@ -86,10 +86,13 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denobootstrapscriptpath" class="tsd-kind-icon">deno<wbr>Bootstrap<wbr>Script<wbr>Path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denocachedonly" class="tsd-kind-icon">deno<wbr>Cached<wbr>Only</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denoconfig" class="tsd-kind-icon">deno<wbr>Config</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denoexecutable" class="tsd-kind-icon">deno<wbr>Executable</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denoextraflags" class="tsd-kind-icon">deno<wbr>Extra<wbr>Flags</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denoimportmappath" class="tsd-kind-icon">deno<wbr>Import<wbr>Map<wbr>Path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denolockfilepath" class="tsd-kind-icon">deno<wbr>Lock<wbr>File<wbr>Path</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denonocheck" class="tsd-kind-icon">deno<wbr>NoCheck</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denononpm" class="tsd-kind-icon">deno<wbr>NoNPM</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denounstable" class="tsd-kind-icon">deno<wbr>Unstable</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#denov8flags" class="tsd-kind-icon">deno<wbr>V8Flags</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_src_denoworker_.denoworkeroptions.html#location" class="tsd-kind-icon">location</a></li>
@@ -112,7 +115,7 @@
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>Bootstrap<wbr>Script<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L38">src/DenoWorker.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L38">src/DenoWorker.ts:38</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -129,7 +132,7 @@
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>Cached<wbr>Only<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L155">src/DenoWorker.ts:155</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L155">src/DenoWorker.ts:155</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -139,12 +142,27 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="denoconfig" class="tsd-anchor"></a>
+					<h3>deno<wbr>Config</h3>
+					<div class="tsd-signature tsd-kind-icon">deno<wbr>Config<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L165">src/DenoWorker.ts:165</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The path to the config file that Deno should use.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="denoexecutable" class="tsd-anchor"></a>
 					<h3>deno<wbr>Executable</h3>
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>Executable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L31">src/DenoWorker.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L31">src/DenoWorker.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -155,12 +173,28 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="denoextraflags" class="tsd-anchor"></a>
+					<h3>deno<wbr>Extra<wbr>Flags</h3>
+					<div class="tsd-signature tsd-kind-icon">deno<wbr>Extra<wbr>Flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L177">src/DenoWorker.ts:177</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Extra flags that should be passed to Deno.
+							This may be useful for passing flags that are not supported by this library.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="denoimportmappath" class="tsd-anchor"></a>
 					<h3>deno<wbr>Import<wbr>Map<wbr>Path</h3>
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>Import<wbr>Map<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L145">src/DenoWorker.ts:145</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L145">src/DenoWorker.ts:145</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -175,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>Lock<wbr>File<wbr>Path<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L150">src/DenoWorker.ts:150</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L150">src/DenoWorker.ts:150</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -190,7 +224,7 @@
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>NoCheck<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L160">src/DenoWorker.ts:160</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L160">src/DenoWorker.ts:160</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -200,12 +234,28 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="denononpm" class="tsd-anchor"></a>
+					<h3>deno<wbr>NoNPM</h3>
+					<div class="tsd-signature tsd-kind-icon">deno<wbr>NoNPM<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L171">src/DenoWorker.ts:171</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Whether to prevent Deno from loading packages from npm.
+							Defaults to true.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="denounstable" class="tsd-anchor"></a>
 					<h3>deno<wbr>Unstable</h3>
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>Unstable<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>bareNodeBuiltins<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>broadcastChannel<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>byonm<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>cron<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>ffi<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>fs<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>http<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>kv<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>net<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>sloppyImports<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>temporal<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>unsafeProto<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>webgpu<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>workerOptions<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L62">src/DenoWorker.ts:62</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L62">src/DenoWorker.ts:62</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -220,7 +270,7 @@
 					<div class="tsd-signature tsd-kind-icon">deno<wbr>V8Flags<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L140">src/DenoWorker.ts:140</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L140">src/DenoWorker.ts:140</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -235,7 +285,7 @@
 					<div class="tsd-signature tsd-kind-icon">location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L172">src/DenoWorker.ts:172</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L189">src/DenoWorker.ts:189</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -251,7 +301,7 @@
 					<div class="tsd-signature tsd-kind-icon">log<wbr>Stderr<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L57">src/DenoWorker.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L57">src/DenoWorker.ts:57</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -267,7 +317,7 @@
 					<div class="tsd-signature tsd-kind-icon">log<wbr>Stdout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L51">src/DenoWorker.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L51">src/DenoWorker.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -283,7 +333,7 @@
 					<div class="tsd-signature tsd-kind-icon">permissions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>allowAll<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>allowEnv<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>allowHrtime<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>allowNet<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>allowPlugin<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">; </span>allowRead<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>allowRun<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>allowWrite<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>denyNet<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L177">src/DenoWorker.ts:177</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L194">src/DenoWorker.ts:194</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -389,7 +439,7 @@
 					<div class="tsd-signature tsd-kind-icon">reload<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L45">src/DenoWorker.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L45">src/DenoWorker.ts:45</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -406,7 +456,7 @@
 					<div class="tsd-signature tsd-kind-icon">spawn<wbr>Options<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SpawnOptions</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L241">src/DenoWorker.ts:241</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L258">src/DenoWorker.ts:258</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -421,7 +471,7 @@
 					<div class="tsd-signature tsd-kind-icon">unsafely<wbr>Ignore<wbr>Certificate<wbr>Errors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/7fe2de1/src/DenoWorker.ts#L166">src/DenoWorker.ts:166</a></li>
+							<li>Defined in <a href="https://github.com/casual-simulation/node-deno-vm/blob/46d6455/src/DenoWorker.ts#L183">src/DenoWorker.ts:183</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -479,7 +529,13 @@
 								<a href="_src_denoworker_.denoworkeroptions.html#denocachedonly" class="tsd-kind-icon">deno<wbr>Cached<wbr>Only</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_src_denoworker_.denoworkeroptions.html#denoconfig" class="tsd-kind-icon">deno<wbr>Config</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_src_denoworker_.denoworkeroptions.html#denoexecutable" class="tsd-kind-icon">deno<wbr>Executable</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_src_denoworker_.denoworkeroptions.html#denoextraflags" class="tsd-kind-icon">deno<wbr>Extra<wbr>Flags</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_src_denoworker_.denoworkeroptions.html#denoimportmappath" class="tsd-kind-icon">deno<wbr>Import<wbr>Map<wbr>Path</a>
@@ -489,6 +545,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_src_denoworker_.denoworkeroptions.html#denonocheck" class="tsd-kind-icon">deno<wbr>NoCheck</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_src_denoworker_.denoworkeroptions.html#denononpm" class="tsd-kind-icon">deno<wbr>NoNPM</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="_src_denoworker_.denoworkeroptions.html#denounstable" class="tsd-kind-icon">deno<wbr>Unstable</a>
