@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.12.1
+
+### Date: 4/28/2025
+
+### Changes:
+
+-   Added `denoNoConfig` and `denoNoNPM` options to DenoWorker.
+    -   They default to `true` to prevent Deno from trying to load or interact with other files/configurations.
+    -   Also at least one of them needs to be set to `true` for DenoWorker to be able to load the bootstrap script from `node_modules` (see [#54 for more info](https://github.com/casual-simulation/node-deno-vm/issues/54)).
+
 ## v0.12.0
 
 ### Date: 4/12/2024
