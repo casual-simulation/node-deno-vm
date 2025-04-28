@@ -749,6 +749,129 @@ describe('DenoWorker', () => {
             });
         });
 
+        describe('denoConfig', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('should not include --config by default', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript);
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--config');
+
+                // should pass --no-config when denoConfig is omitted
+                expect(args).toContain('--no-config');
+            });
+
+            it('should not set --config by when denoConfig is empty', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, { denoConfig: '' });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).not.toContain('--config');
+
+                // should pass --no-config when denoConfig is empty
+                expect(args).toContain('--no-config');
+            });
+
+            it('should set --config when denoConfig is nonempty', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+                const configPath = path.resolve('./src/test/deno.json');
+                worker = new DenoWorker(echoScript, {
+                    denoConfig: configPath,
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain(`--config=${configPath}`);
+            });
+        });
+
+        describe('denoExtraFlags', async () => {
+            afterEach(() => {
+                jest.clearAllMocks();
+            });
+
+            it('should include the given extra flags', async () => {
+                const spawnSpy = jest.spyOn(child_process, 'spawn');
+
+                worker = new DenoWorker(echoScript, {
+                    denoExtraFlags: ['--unstable', '--inspect'],
+                });
+
+                let resolve: any;
+                let promise = new Promise((res, rej) => {
+                    resolve = res;
+                });
+                worker.onmessage = (e) => {
+                    resolve();
+                };
+
+                worker.postMessage({
+                    type: 'echo',
+                    message: 'Hello',
+                });
+
+                await promise;
+
+                const call = spawnSpy.mock.calls[0];
+                const [_deno, args] = call;
+                expect(args).toContain('--unstable');
+                expect(args).toContain('--inspect');
+            });
+        });
+
         describe('denoV8Flags', async () => {
             afterEach(() => {
                 jest.clearAllMocks();

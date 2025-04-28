@@ -160,16 +160,21 @@ export interface DenoWorkerOptions {
     denoNoCheck: boolean;
 
     /**
-     * Whether to prevent Deno from loading a config file.
-     * Defaults to true.
+     * The path to the config file that Deno should use.
      */
-    denoNoConfig: boolean;
+    denoConfig: string;
 
     /**
      * Whether to prevent Deno from loading packages from npm.
      * Defaults to true.
      */
     denoNoNPM: boolean;
+
+    /**
+     * Extra flags that should be passed to Deno.
+     * This may be useful for passing flags that are not supported by this library.
+     */
+    denoExtraFlags: string[];
 
     /**
      * Allow Deno to make requests to hosts with certificate
@@ -305,9 +310,10 @@ export class DenoWorker {
                 denoLockFilePath: '',
                 denoCachedOnly: false,
                 denoNoCheck: false,
-                denoNoConfig: true,
+                denoConfig: undefined,
                 denoNoNPM: true,
                 unsafelyIgnoreCertificateErrors: false,
+                denoExtraFlags: [],
                 spawnOptions: {},
             },
             options || {}
@@ -419,7 +425,11 @@ export class DenoWorker {
             }
             addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
             addOption(runArgs, '--no-check', this._options.denoNoCheck);
-            addOption(runArgs, '--no-config', this._options.denoNoConfig);
+            if (!this._options.denoConfig) {
+                addOption(runArgs, '--no-config', true);
+            } else {
+                addOption(runArgs, '--config', [this._options.denoConfig]);
+            }
             addOption(runArgs, '--no-npm', this._options.denoNoNPM);
             addOption(
                 runArgs,
@@ -499,6 +509,10 @@ export class DenoWorker {
                         this._options.permissions.allowHrtime
                     );
                 }
+            }
+
+            if (this._options.denoExtraFlags.length > 0) {
+                runArgs.push(...this._options.denoExtraFlags);
             }
 
             this._process = spawn(
