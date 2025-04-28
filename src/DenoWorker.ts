@@ -160,6 +160,18 @@ export interface DenoWorkerOptions {
     denoNoCheck: boolean;
 
     /**
+     * Whether to prevent Deno from loading a config file.
+     * Defaults to true.
+     */
+    denoNoConfig: boolean;
+
+    /**
+     * Whether to prevent Deno from loading packages from npm.
+     * Defaults to true.
+     */
+    denoNoNPM: boolean;
+
+    /**
      * Allow Deno to make requests to hosts with certificate
      * errors.
      */
@@ -293,6 +305,8 @@ export class DenoWorker {
                 denoLockFilePath: '',
                 denoCachedOnly: false,
                 denoNoCheck: false,
+                denoNoConfig: true,
+                denoNoNPM: true,
                 unsafelyIgnoreCertificateErrors: false,
                 spawnOptions: {},
             },
@@ -405,6 +419,8 @@ export class DenoWorker {
             }
             addOption(runArgs, '--cached-only', this._options.denoCachedOnly);
             addOption(runArgs, '--no-check', this._options.denoNoCheck);
+            addOption(runArgs, '--no-config', this._options.denoNoConfig);
+            addOption(runArgs, '--no-npm', this._options.denoNoNPM);
             addOption(
                 runArgs,
                 '--unsafely-ignore-certificate-errors',
