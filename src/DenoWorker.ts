@@ -336,6 +336,9 @@ export class DenoWorker {
             }
             this._socket = socket;
             socket.on('message', (message) => {
+                if (Buffer.isBuffer(message)) {
+                    message = message.toString();
+                }
                 if (typeof message === 'string') {
                     const structuredData = JSON.parse(message) as Structure;
                     const channel = structuredData.channel;
